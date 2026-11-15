@@ -23,6 +23,7 @@ from . import metrics
 from .auth import make_token
 from .config import Settings, load_settings
 from .logging_setup import setup_logging
+from .queue import make_redis
 from .store import Store, make_pool
 
 # Paths polled by probes and Prometheus: logged at DEBUG so they do not flood the logs.
@@ -90,10 +91,7 @@ def create_app(settings: Settings | None = None, store=None, redis_client=None) 
     settings = settings or load_settings()
     logger = setup_logging(settings.log_level, settings.log_file)
     store = store or Store(make_pool(settings.database_url))
-    # Short timeouts: a dead Redis must make a request fail fast, not hang.
-    redis_client = redis_client or redis.Redis.from_url(
-        settings.redis_url, socket_timeout=1, socket_connect_timeout=1
-    )
+    redis_client = redis_client or make_redis(settings.redis_url)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
