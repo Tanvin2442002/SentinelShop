@@ -1,0 +1,7 @@
+# Versions checked against PyPI on 2026-11-15.
+fastapi==0.163.1
+uvicorn==0.54.0
+psycopg[binary]==3.3.9
+psycopg-pool==3.3.3
+redis==8.1.0
+prometheus-client==0.26.0
