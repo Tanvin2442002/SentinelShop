@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SentinelShop</title>
+  <!-- No inline script or style, so the edge can send a strict
+       Content-Security-Policy (script-src 'self'; style-src 'self'). -->
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>SentinelShop</h1>
+    <p class="muted">Lab demo shop. Every API reply shows its trace id, so you can find it in Grafana.</p>
+  </header>
+
+  <main>
+    <section aria-labelledby="products-title">
+      <h2 id="products-title">Products</h2>
+      <form id="search-form" class="row">
+        <label for="search-q">Search by name</label>
+        <input id="search-q" name="q" type="search" maxlength="100" placeholder="e.g. mouse">
+        <button type="submit">Search</button>
+        <button type="button" id="search-clear">Show all</button>
+      </form>
+      <p id="products-status" class="status" role="status"></p>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Name</th><th>Price</th><th>Stock</th><th>Quantity</th><th></th></tr>
+        </thead>
+        <tbody id="products-body"></tbody>
+      </table>
+    </section>
+
+    <section aria-labelledby="orders-title">
+      <h2 id="orders-title">Orders</h2>
+      <p id="order-status" class="status" role="status">Place an order from the table above.</p>
+      <form id="order-lookup" class="row">
+        <label for="order-id">Check order by id</label>
+        <input id="order-id" name="id" type="number" min="1" step="1" required>
+        <button type="submit">Check</button>
+      </form>
+    </section>
+
+    <section aria-labelledby="login-title">
+      <h2 id="login-title">Login</h2>
+      <form id="login-form" class="row">
+        <label for="login-user">Username</label>
+        <input id="login-user" name="username" autocomplete="username" maxlength="64" required>
+        <label for="login-pass">Password</label>
+        <input id="login-pass" name="password" type="password" autocomplete="current-password" maxlength="128" required>
+        <button type="submit">Log in</button>
+      </form>
+      <p id="login-status" class="status" role="status"></p>
+    </section>
+  </main>
+</body>
+</html>
