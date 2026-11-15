@@ -7,6 +7,10 @@ from dataclasses import dataclass
 # service at startup instead of silently running with a weak value.
 REQUIRED = ("DATABASE_URL", "REDIS_URL", "SECRET_KEY")
 
+# An unknown level would make logging.setLevel raise deep inside startup;
+# checking here turns it into a clear config error instead of a crash loop.
+LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+
 
 class ConfigError(RuntimeError):
     pass
@@ -35,11 +39,15 @@ def load_settings(env=None) -> Settings:
     except ValueError:
         raise ConfigError("TOKEN_TTL_SECONDS must be an integer") from None
 
+    log_level = env.get("LOG_LEVEL", "INFO").upper()
+    if log_level not in LOG_LEVELS:
+        raise ConfigError("LOG_LEVEL must be one of: " + ", ".join(LOG_LEVELS))
+
     return Settings(
         database_url=env["DATABASE_URL"],
         redis_url=env["REDIS_URL"],
         secret_key=env["SECRET_KEY"],
-        log_level=env.get("LOG_LEVEL", "INFO").upper(),
+        log_level=log_level,
         log_file=env.get("LOG_FILE") or None,
         token_ttl_seconds=ttl,
     )

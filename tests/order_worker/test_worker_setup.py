@@ -68,3 +68,21 @@ def test_set_status_uses_bound_parameters_and_in_flight_guard():
     assert "status IN ('PENDING', 'PROCESSING')" in sql
 
     assert Store(RecordingPool(row=None)).set_status(1, "COMPLETED") is False
+
+
+def test_bad_log_level_rejected():
+    env = {"DATABASE_URL": "postgresql://x", "REDIS_URL": "redis://y"}
+    with pytest.raises(ConfigError) as exc:
+        load_settings({**env, "LOG_LEVEL": "verbose"})
+    assert "LOG_LEVEL" in str(exc.value)
+    assert load_settings({**env, "LOG_LEVEL": "debug"}).log_level == "DEBUG"
+
+
+def test_config_error_exits_2(monkeypatch, capsys):
+    from worker.main import main
+
+    monkeypatch.setenv("DATABASE_URL", "postgresql://x")
+    monkeypatch.setenv("REDIS_URL", "redis://y")
+    monkeypatch.setenv("LOG_LEVEL", "verbose")
+    assert main() == 2
+    assert "LOG_LEVEL must be one of" in capsys.readouterr().err

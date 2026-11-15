@@ -7,6 +7,7 @@ Run with: uvicorn app.main:create_app --factory --host 0.0.0.0 --port 8000
 import json
 import logging
 import re
+import sys
 import time
 import uuid
 from contextlib import asynccontextmanager
@@ -21,7 +22,7 @@ from pydantic import BaseModel, Field
 
 from . import metrics
 from .auth import make_token
-from .config import Settings, load_settings
+from .config import ConfigError, Settings, load_settings
 from .logging_setup import setup_logging
 from .queue import make_redis
 from .store import Store, make_pool
@@ -88,7 +89,14 @@ def _access_level(path: str, status: int) -> int:
 
 
 def create_app(settings: Settings | None = None, store=None, redis_client=None) -> FastAPI:
-    settings = settings or load_settings()
+    if settings is None:
+        try:
+            settings = load_settings()
+        except ConfigError as exc:
+            # Exit 2 with one clear line (same as order-worker) instead of a
+            # traceback. uvicorn does not catch SystemExit from the factory.
+            print(f"catalog-api: {exc}", file=sys.stderr)
+            raise SystemExit(2) from None
     logger = setup_logging(settings.log_level, settings.log_file)
     store = store or Store(make_pool(settings.database_url))
     redis_client = redis_client or make_redis(settings.redis_url)
