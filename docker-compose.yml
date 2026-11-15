@@ -21,7 +21,7 @@ services:
       - no-new-privileges:true
     networks:
       - shop-net
-  
+
   redis:
     image: redis:7.4.11-alpine
     restart: unless-stopped
@@ -73,6 +73,36 @@ services:
     security_opt:
       - no-new-privileges:true
     mem_limit: 256m
+    cpus: 0.5
+    networks:
+      - shop-net
+
+  order-worker:
+    image: ${REGISTRY:-localhost:5000}/order-worker:${TAG:-dev}
+    build:
+      context: ./services/order-worker
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_URL: redis://redis:6379/0
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      LOG_FILE: /var/log/shop/worker.json
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      replicas: 2
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/log/shop:uid=10001,gid=10001
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 192m
     cpus: 0.5
     networks:
       - shop-net
