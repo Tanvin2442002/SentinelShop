@@ -51,3 +51,61 @@ class Store:
                 (product_id,),
             ).fetchone()
         return _product(row) if row else None
+
+    def search_products(self, query: str) -> list[dict]:
+        # The LIKE pattern is built here and sent as a bound parameter.
+        # %, _ and \ typed by the user are escaped so they match literally.
+        escaped = query.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+        pattern = f"%{escaped}%"
+        with self.pool.connection() as conn:
+            rows = conn.execute(
+                "SELECT id, name, price, stock FROM products "
+                "WHERE name ILIKE %s ESCAPE '\\' ORDER BY id",
+                (pattern,),
+            ).fetchall()
+        return [_product(r) for r in rows]
+
+    def create_order(self, product_id: int, quantity: int) -> int | None:
+        """Insert a PENDING order. Returns its id, or None if the product does not exist."""
+        # INSERT ... SELECT inserts nothing when the product is missing, so the
+        # existence check and the insert are one atomic statement.
+        with self.pool.connection() as conn:
+            row = conn.execute(
+                "INSERT INTO orders (product_id, quantity, status) "
+                "SELECT id, %s, 'PENDING' FROM products WHERE id = %s "
+                "RETURNING id",
+                (quantity, product_id),
+            ).fetchone()
+        return row["id"] if row else None
+
+    def mark_order_failed(self, order_id: int) -> None:
+        with self.pool.connection() as conn:
+            conn.execute(
+                "UPDATE orders SET status = 'FAILED', updated_at = now() WHERE id = %s",
+                (order_id,),
+            )
+
+    def get_order(self, order_id: int) -> dict | None:
+        with self.pool.connection() as conn:
+            row = conn.execute(
+                "SELECT id, product_id, quantity, status FROM orders WHERE id = %s",
+                (order_id,),
+            ).fetchone()
+        return dict(row) if row else None
+
+    def check_login(self, username: str, password: str) -> dict | None:
+        """Return {"username", "role"} if the password matches, else None."""
+        # crypt() re-hashes the given password with the stored salt/cost and
+        # compares inside Postgres; the password never leaves this call.
+        with self.pool.connection() as conn:
+            row = conn.execute(
+                "SELECT username, role FROM users "
+                "WHERE username = %s AND password_hash = crypt(%s, password_hash)",
+                (username, password),
+            ).fetchone()
+        return dict(row) if row else None
+
+    def ping(self) -> None:
+        """Raise if the database cannot answer. Short timeout: /readyz must not hang."""
+        with self.pool.connection(timeout=2) as conn:
+            conn.execute("SELECT 1")
