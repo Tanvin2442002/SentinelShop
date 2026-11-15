@@ -27,9 +27,9 @@ CREATE TABLE IF NOT EXISTS orders (
 
 -- DEMO users for the lab only (fake passwords, bcrypt-hashed).
 INSERT INTO users (username, password_hash, role) VALUES
-    ('alice', crypt('alice-demo-pw', gen_salt('bf')), 'customer'),
-    ('bob',   crypt('bob-demo-pw',   gen_salt('bf')), 'customer'),
-    ('admin', crypt('admin-demo-pw', gen_salt('bf')), 'admin')
+    ('alice', crypt('alice-demo-pw', gen_salt('bf', 10)), 'customer'),
+    ('bob',   crypt('bob-demo-pw',   gen_salt('bf', 10)), 'customer'),
+    ('admin', crypt('admin-demo-pw', gen_salt('bf', 10)), 'admin')
 ON CONFLICT (username) DO NOTHING;
 
 -- Seed catalog, only if the table is empty.
