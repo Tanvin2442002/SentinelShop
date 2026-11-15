@@ -21,6 +21,34 @@ services:
       - no-new-privileges:true
     networks:
       - shop-net
+  
+  redis:
+    image: redis:7.4.11-alpine
+    restart: unless-stopped
+    user: "999:1000"
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --maxmemory
+      - 128mb
+      - --maxmemory-policy
+      - noeviction
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - shop-net
 
 networks:
   shop-net:
@@ -31,3 +59,4 @@ networks:
 
 volumes:
   pgdata:
+  redisdata:
