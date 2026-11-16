@@ -86,3 +86,16 @@ GITOPS_DIR ?= $(HOME)/Documents/Projects/sentinelShop-gitops
 gitops:
 > sed -i 's/^tag: .*/tag: "$(TAG)"/' $(GITOPS_DIR)/values-prod.yaml
 > git -C $(GITOPS_DIR) diff --quiet || git -C $(GITOPS_DIR) -c user.name=sentinelshop-ci -c user.email=ci@localhost commit -q -am "chore: set production image tag to $(TAG)"
+
+MON          := $(COMPOSE) -f docker-compose.yml -f docker-compose.monitoring.yml
+MON_SERVICES := prometheus cadvisor node-exporter
+
+.PHONY: mon-up mon-down mon-ps
+mon-up:
+> $(MON) up -d $(MON_SERVICES)
+
+mon-down:
+> $(MON) rm -sf $(MON_SERVICES)
+
+mon-ps:
+> $(MON) ps
