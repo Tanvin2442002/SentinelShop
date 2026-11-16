@@ -1,0 +1,5 @@
+bruteforce | bruteforce: statuses {401: 15, 403: 15} | alerts +1 | attacker {"status": 403} | normal client 200
+sqli | sqli: statuses {200: 3, 422: 2} | alerts +1 | attacker {"status": 403} | normal client 200
+xss | xss: statuses {200: 3, 404: 1} | alerts +1 | attacker {"status": 403} | normal client 200
+traversal | traversal: statuses {404: 2, 200: 1, 400: 1} | alerts +1 | attacker {"status": 403} | normal client 200
+scan404 | scan404: statuses {404: 22, 403: 18} | alerts +1 | attacker {"status": 403} | normal client 200

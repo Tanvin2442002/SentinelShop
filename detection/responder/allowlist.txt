@@ -1,0 +1,5 @@
+127.0.0.1  # localhost
+172.30.0.1  # gateway: the host as seen from containers
+172.30.0.10  # edge
+172.30.0.30  # responder
+172.30.0.0/27  # platform range: monitoring, databases, workers

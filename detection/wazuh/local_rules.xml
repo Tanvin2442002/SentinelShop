@@ -1,0 +1,66 @@
+<group name="shop,">
+
+  <rule id="100100" level="1">
+    <decoded_as>json</decoded_as>
+    <field name="service">^edge$</field>
+    <field name="uri" type="pcre2">^/api/login</field>
+    <status>^401$</status>
+    <description>edge: failed login (401)</description>
+  </rule>
+
+  <rule id="100101" level="1">
+    <decoded_as>json</decoded_as>
+    <field name="service">^edge$</field>
+    <status>^404$</status>
+    <description>edge: request answered 404</description>
+  </rule>
+
+  <rule id="100110" level="10" frequency="10" timeframe="60" ignore="300">
+    <if_matched_sid>100100</if_matched_sid>
+    <same_field>remote_addr</same_field>
+    <description>shop-bruteforce-login: 10 failed logins from one source within 60 seconds</description>
+    <mitre><id>T1110</id></mitre>
+    <info type="text">OWASP 2021 A07 Identification and Authentication Failures</info>
+    <group>shop_attack,owasp_a07,</group>
+  </rule>
+
+  <rule id="100111" level="10" ignore="300">
+    <decoded_as>json</decoded_as>
+    <field name="service">^edge$</field>
+    <field name="uri" type="pcre2">(?i)(union(\s|%20|\+)+select|' ?or ?1=1|%27(\s|%20)?or|sleep\(|--)</field>
+    <description>shop-sqli-probe: SQL injection pattern in the request</description>
+    <mitre><id>T1190</id></mitre>
+    <info type="text">OWASP 2021 A03 Injection</info>
+    <group>shop_attack,owasp_a03,</group>
+  </rule>
+
+  <rule id="100112" level="7" ignore="300">
+    <decoded_as>json</decoded_as>
+    <field name="service">^edge$</field>
+    <field name="uri" type="pcre2">(?i)(&lt;script|%3cscript|onerror=|javascript:)</field>
+    <description>shop-xss-probe: cross-site scripting pattern in the request</description>
+    <mitre><id>T1190</id></mitre>
+    <info type="text">OWASP 2021 A03 Injection</info>
+    <group>shop_attack,owasp_a03,</group>
+  </rule>
+
+  <rule id="100113" level="10" ignore="300">
+    <decoded_as>json</decoded_as>
+    <field name="service">^edge$</field>
+    <field name="uri" type="pcre2">(?i)(\.\./|%2e%2e%2f|/etc/passwd)</field>
+    <description>shop-path-traversal: directory traversal pattern in the request</description>
+    <mitre><id>T1190</id></mitre>
+    <info type="text">OWASP 2021 A01 Broken Access Control</info>
+    <group>shop_attack,owasp_a01,</group>
+  </rule>
+
+  <rule id="100114" level="7" frequency="15" timeframe="30" ignore="300">
+    <if_matched_sid>100101</if_matched_sid>
+    <same_field>remote_addr</same_field>
+    <description>shop-scan-404: 15 requests to missing paths from one source within 30 seconds</description>
+    <mitre><id>T1595.003</id></mitre>
+    <info type="text">OWASP 2021 A05 Security Misconfiguration</info>
+    <group>shop_attack,owasp_a05,</group>
+  </rule>
+
+</group>

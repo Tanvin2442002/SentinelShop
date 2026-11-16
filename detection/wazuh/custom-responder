@@ -1,0 +1,11 @@
+#!/var/ossec/framework/python/bin/python3
+import json
+import sys
+import urllib.request
+
+alert_file, hook_url = sys.argv[1], sys.argv[3]
+with open(alert_file) as f:
+    alert = json.load(f)
+req = urllib.request.Request(hook_url, data=json.dumps(alert).encode(),
+                             headers={"Content-Type": "application/json"})
+urllib.request.urlopen(req, timeout=10)

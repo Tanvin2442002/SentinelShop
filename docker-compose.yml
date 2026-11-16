@@ -1,6 +1,29 @@
 name: sentinelshop
 
 services:
+  log-init:
+    image: python:3.12-alpine
+    command:
+      - sh
+      - -c
+      - >-
+        chmod 1777 /var/log/shop;
+        [ -e /etc/nginx/blocklist/blocklist.conf ] || touch /etc/nginx/blocklist/blocklist.conf;
+        chown 10001:10001 /etc/nginx/blocklist /etc/nginx/blocklist/blocklist.conf
+    volumes:
+      - shoplogs:/var/log/shop
+      - blocklist:/etc/nginx/blocklist
+    restart: "no"
+    network_mode: none
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    cap_add:
+      - CHOWN
+    mem_limit: 16m
+
   postgres:
     image: postgres:16.16-alpine
     restart: unless-stopped
@@ -135,7 +158,12 @@ services:
       - "127.0.0.1:${EDGE_PORT:-8080}:8080"
     volumes:
       - ./services/edge/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./services/edge/blocklist-watch.sh:/docker-entrypoint.d/40-blocklist-watch.sh:ro
+      - blocklist:/etc/nginx/blocklist:ro
+      - shoplogs:/var/log/shop
     depends_on:
+      log-init:
+        condition: service_completed_successfully
       catalog-api:
         condition: service_healthy
       web:
@@ -167,5 +195,7 @@ networks:
           gateway: 172.30.0.1
 
 volumes:
+  shoplogs:
+  blocklist:
   pgdata:
   redisdata:

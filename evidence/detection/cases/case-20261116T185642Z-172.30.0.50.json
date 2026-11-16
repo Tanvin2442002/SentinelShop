@@ -1,0 +1,43 @@
+{
+  "case_id": "case-20261116T185642Z-172.30.0.50",
+  "created": "2026-11-16T18:56:42.038842+00:00",
+  "severity": 7,
+  "source_ip": "172.30.0.50",
+  "rule": {
+    "name": "shop-scan-404",
+    "mitre": "T1595.003",
+    "owasp": "owasp_a05"
+  },
+  "observables": [
+    {
+      "type": "ip",
+      "value": "172.30.0.50"
+    },
+    {
+      "type": "path",
+      "value": "/api/missing-4"
+    }
+  ],
+  "enrichment": {
+    "score": 95,
+    "label": "known attacker (lab scanner)"
+  },
+  "timeline": [
+    {
+      "ts": "2026-11-16T18:56:41.007429+00:00",
+      "event": "alert received"
+    },
+    {
+      "ts": "2026-11-16T18:56:42.038842+00:00",
+      "event": "blocked and verified"
+    }
+  ],
+  "action": {
+    "type": "block",
+    "ttl": 30,
+    "verified": {
+      "normal_status": 200,
+      "attacker_status": 403
+    }
+  }
+}

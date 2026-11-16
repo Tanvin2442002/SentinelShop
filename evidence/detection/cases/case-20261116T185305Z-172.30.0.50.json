@@ -1,0 +1,43 @@
+{
+  "case_id": "case-20261116T185305Z-172.30.0.50",
+  "created": "2026-11-16T18:53:05.987941+00:00",
+  "severity": 10,
+  "source_ip": "172.30.0.50",
+  "rule": {
+    "name": "shop-bruteforce-login",
+    "mitre": "T1110",
+    "owasp": "owasp_a07"
+  },
+  "observables": [
+    {
+      "type": "ip",
+      "value": "172.30.0.50"
+    },
+    {
+      "type": "path",
+      "value": "/api/login"
+    }
+  ],
+  "enrichment": {
+    "score": 95,
+    "label": "known attacker (lab scanner)"
+  },
+  "timeline": [
+    {
+      "ts": "2026-11-16T18:53:04.932933+00:00",
+      "event": "alert received"
+    },
+    {
+      "ts": "2026-11-16T18:53:05.987941+00:00",
+      "event": "blocked and verified"
+    }
+  ],
+  "action": {
+    "type": "block",
+    "ttl": 30,
+    "verified": {
+      "normal_status": 200,
+      "attacker_status": 403
+    }
+  }
+}

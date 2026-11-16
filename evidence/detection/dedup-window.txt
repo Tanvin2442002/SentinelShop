@@ -1,0 +1,6 @@
+run 1 at 18:59:45
+sqli: statuses {200: 3, 422: 2}
+alerts +1, decisions +1
+run 2 (same source, block expired, inside 300 s) at 19:00:37
+sqli: statuses {200: 3, 422: 2}
+alerts +0, decisions +0
