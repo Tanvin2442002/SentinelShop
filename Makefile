@@ -50,6 +50,9 @@ lint:
 
 sast:
 > docker run --rm -v "$(CURDIR):/src" -w /src $(SEMGREP) semgrep scan --config semgrep-rules/ --config p/python --config p/dockerfile --severity ERROR --metrics=off --error services
+> @echo "--- advisory pass: all severities, does not fail the build ---"
+> docker run --rm -v "$(CURDIR):/src" -w /src $(SEMGREP) semgrep scan --config p/security-audit --config p/owasp-top-ten --config p/dockerfile --metrics=off services
+
 
 scan-config:
 > docker run --rm -v "$(CURDIR):/src" -v trivy-cache:/root/.cache/ $(TRIVY) config --severity HIGH,CRITICAL --exit-code 1 /src
