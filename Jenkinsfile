@@ -18,6 +18,7 @@ pipeline {
 
     environment {
         REGISTRY = 'localhost:5000'
+        GITOPS_DIR = '/home/mist/Documents/Projects/sentinelShop-gitops'
     }
 
     stages {
@@ -53,6 +54,10 @@ pipeline {
 
         stage('Push') {
             steps { script { runCheck('push', 'push') } }
+        }
+
+        stage('GitOps') {
+            steps { script { runCheck('gitops', 'gitops') } }
         }
     }
 
