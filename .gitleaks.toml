@@ -25,4 +25,5 @@ keywords = ["redis"]
 description = "Placeholders and test fixtures that are not real secrets"
 paths = [
     '''\.env\.example$''',
+        '''(^|/)\.env$''',
 ]
