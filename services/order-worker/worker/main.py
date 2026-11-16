@@ -32,6 +32,14 @@ DB_ERRORS = (psycopg.Error,)
 ERROR_PAUSE_SECONDS = 1.0
 PAUSE_STEP_SECONDS = 0.1
 
+# Chaos values from contracts/chaos.md. The names are frozen; the numbers may
+# be tuned to meet the calibration requirement there.
+CHAOS_DB_DELAY_SECONDS = 2.0
+CHAOS_LEAK_BYTES = 2 * 1024 * 1024
+# CHAOS_MEMORY_LEAK keeps chunks here forever. A module-level list is never
+# freed, which is exactly the bug being simulated.
+_leaked: list[bytes] = []
+
 
 class BadMessage(ValueError):
     pass
@@ -60,7 +68,8 @@ def parse_message(raw) -> tuple[int, str]:
 
 class Worker:
     def __init__(self, store, queue, logger: logging.Logger,
-                 sleep=time.sleep, work_seconds=lambda: random.uniform(1, 2)):
+                 sleep=time.sleep, work_seconds=lambda: random.uniform(1, 2),
+                 slow_db=False, memory_leak=False):
         self.store = store
         self.queue = queue
         self.logger = logger
@@ -68,6 +77,8 @@ class Worker:
         self.sleep = sleep
         self.work_seconds = work_seconds
         self.stopping = False
+        self.slow_db = slow_db
+        self.memory_leak = memory_leak
 
     # --- shutdown ---------------------------------------------------------
 
@@ -124,13 +135,17 @@ class Worker:
 
         self.logger.info("order picked",
                          extra={"fields": {"trace_id": trace_id, "order_id": order_id}})
+        if self.memory_leak:
+            # Repeating a non-zero byte writes every page, so it really counts
+            # toward RSS. bytes(n) could be lazily zeroed pages that cost nothing.
+            _leaked.append(b"\xa5" * CHAOS_LEAK_BYTES)
         try:
-            if not self.store.set_status(order_id, "PROCESSING"):
+            if not self._set_status(order_id, "PROCESSING"):
                 self._failed(start, trace_id, order_id,
                              reason="order not found or already final")
                 return
             self.sleep(self.work_seconds())
-            if not self.store.set_status(order_id, "COMPLETED"):
+            if not self._set_status(order_id, "COMPLETED"):
                 self._failed(start, trace_id, order_id,
                              reason="order changed to a final status while processing")
                 return
@@ -144,6 +159,12 @@ class Worker:
         self.logger.info("order completed", extra={"fields": {
             "trace_id": trace_id, "order_id": order_id,
             "duration_ms": round(duration * 1000, 2), "result": "completed"}})
+
+    def _set_status(self, order_id: int, status: str) -> bool:
+        if self.slow_db:
+            # Before EACH update: two updates per order, so ~4 s extra per order.
+            self.sleep(CHAOS_DB_DELAY_SECONDS)
+        return self.store.set_status(order_id, status)
 
     def _failed(self, start, trace_id, order_id, reason, level=logging.WARNING) -> None:
         metrics.ORDERS_PROCESSED.labels("failed").inc()
@@ -184,7 +205,8 @@ def main() -> int:
     logger = setup_logging(settings.log_level, settings.log_file)
     store = Store(make_pool(settings.database_url))
     store.open()
-    worker = Worker(store, make_redis(settings.redis_url), logger)
+    worker = Worker(store, make_redis(settings.redis_url), logger,
+                    slow_db=settings.chaos_slow_db, memory_leak=settings.chaos_memory_leak)
 
     signal.signal(signal.SIGTERM, worker.request_stop)
     signal.signal(signal.SIGINT, worker.request_stop)
