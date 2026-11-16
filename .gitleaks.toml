@@ -1,0 +1,28 @@
+title = "SentinelShop gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "sentinelshop-secret-key"
+description = "Hard-coded SECRET_KEY (32+ hex characters)"
+regex = '''(?i)secret_key\s*[:=]\s*['"]?[a-f0-9]{32,}['"]?'''
+keywords = ["secret_key"]
+
+[[rules]]
+id = "sentinelshop-db-url-password"
+description = "Postgres URL with a literal password"
+regex = '''postgres(?:ql)?://[^:\s/]+:[^@\s$/]{4,}@'''
+keywords = ["postgres"]
+
+[[rules]]
+id = "sentinelshop-redis-url-password"
+description = "hardcoded redis password"
+regex = '''redis://[^":\s/]*:[^@\s$/]{4,}@'''
+keywords = ["redis"]
+
+[allowlist]
+description = "Placeholders and test fixtures that are not real secrets"
+paths = [
+    '''\.env\.example$''',
+]
