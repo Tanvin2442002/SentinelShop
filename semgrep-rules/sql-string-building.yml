@@ -1,0 +1,14 @@
+rules:
+  - id: sentinelshop-sql-string-building
+    languages: [python]
+    severity: ERROR
+    message: >-
+      SQL is built from a string (f-string, %, .format or +).
+      Pass values as parameters instead: cur.execute("... WHERE name = %s", (name,))
+    pattern-either:
+      - pattern: $CUR.execute(f"...", ...)
+      - pattern: $CUR.execute("..." % $X, ...)
+      - pattern: $CUR.execute("...".format(...), ...)
+      - pattern: $CUR.execute($X + $Y, ...)
+    metadata:
+      cwe: "CWE-89: SQL Injection"

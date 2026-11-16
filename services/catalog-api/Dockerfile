@@ -20,6 +20,8 @@ WORKDIR /srv
 COPY --from=builder /opt/venv /opt/venv
 COPY app ./app
 
+RUN apk upgrade --no-cache
+
 USER 10001:10001
 EXPOSE 8000
 
