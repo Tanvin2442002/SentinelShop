@@ -6,6 +6,7 @@ Run with: uvicorn app.main:create_app --factory --host 0.0.0.0 --port 8000
 
 import json
 import logging
+import random
 import re
 import sys
 import time
@@ -33,6 +34,10 @@ QUIET_PATHS = {"/healthz", "/metrics"}
 # The edge sends a 32-hex $request_id. Anything else (missing, too long, odd
 # characters) is replaced so a client cannot push junk into every log line.
 TRACE_ID_RE = re.compile(r"^[A-Za-z0-9-]{1,64}$")
+
+# contracts/chaos.md: CHAOS_LATENCY_MS hits ~30% of GET /products/{id}, so the
+# p95/p99 rise but the median stays normal, like a real partial slowdown.
+CHAOS_LATENCY_SHARE = 0.3
 
 
 def _trace_id(request: Request) -> str:
@@ -88,7 +93,10 @@ def _access_level(path: str, status: int) -> int:
     return logging.INFO
 
 
-def create_app(settings: Settings | None = None, store=None, redis_client=None) -> FastAPI:
+def create_app(settings: Settings | None = None, store=None, redis_client=None,
+               chaos_random=random.random, chaos_sleep=time.sleep) -> FastAPI:
+    # chaos_random and chaos_sleep are injected so unit tests are instant and
+    # deterministic; in production they are the real random() and sleep().
     if settings is None:
         try:
             settings = load_settings()
@@ -187,6 +195,10 @@ def create_app(settings: Settings | None = None, store=None, redis_client=None) 
     # metrics contract (route="/products/{id}").
     @app.get("/products/{id}")
     def get_product(id: int):
+        # A sync endpoint runs in FastAPI's thread pool, so sleeping here
+        # slows only this request, not the event loop.
+        if settings.chaos_latency_ms and chaos_random() < CHAOS_LATENCY_SHARE:
+            chaos_sleep(settings.chaos_latency_ms / 1000)
         product = store.get_product(id)
         if product is None:
             raise HTTPException(status_code=404, detail="product not found")
@@ -208,6 +220,14 @@ def create_app(settings: Settings | None = None, store=None, redis_client=None) 
                 fields["order_id"] = order_id
             logger.error("order creation failed", extra={"fields": fields})
             raise HTTPException(status_code=503, detail=detail)
+
+        # CHAOS_ERROR_RATE: fail before touching the DB or queue, so no row is
+        # left behind. The log and detail must look like a real bug and never
+        # mention chaos (contracts/chaos.md), or the blind drill is spoiled.
+        if settings.chaos_error_rate and chaos_random() < settings.chaos_error_rate:
+            logger.error("order creation failed",
+                         extra={"fields": {"trace_id": trace_id, "reason": "internal error"}})
+            raise HTTPException(status_code=500, detail="internal error")
 
         try:
             order_id = store.create_order(order.product_id, order.quantity)
