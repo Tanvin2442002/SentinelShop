@@ -6,7 +6,7 @@ COMPOSE := docker compose
 
 env:
 > test -f .env || (cp .env.example .env \
->   && sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$$(openssl rand -hex 16)/; s/^SECRET_KEY=.*/SECRET_KEY=$$(openssl rand -hex 32)/" .env \
+>   && sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$$(openssl rand -hex 16)/; s/^SECRET_KEY=.*/SECRET_KEY=$$(openssl rand -hex 32)/; s/^GRAFANA_ADMIN_PASSWORD=.*/GRAFANA_ADMIN_PASSWORD=$$(openssl rand -hex 12)/" .env \
 >   && echo "created .env with generated secrets")
 
 up: env
@@ -14,10 +14,10 @@ up: env
 > @echo "stack is up on the port set by EDGE_PORT in .env (default 8080)"
 
 down:
-> $(COMPOSE) down
+> $(MON) down
 
 clean:
-> $(COMPOSE) down -v
+> $(MON) down -v
 
 logs:
 > $(COMPOSE) logs -f --tail 50
@@ -86,3 +86,16 @@ GITOPS_DIR ?= $(HOME)/Documents/Projects/sentinelShop-gitops
 gitops:
 > sed -i 's/^tag: .*/tag: "$(TAG)"/' $(GITOPS_DIR)/values-prod.yaml
 > git -C $(GITOPS_DIR) diff --quiet || git -C $(GITOPS_DIR) -c user.name=sentinelshop-ci -c user.email=ci@localhost commit -q -am "chore: set production image tag to $(TAG)"
+
+MON          := $(COMPOSE) -f docker-compose.yml -f docker-compose.monitoring.yml
+MON_SERVICES := prometheus cadvisor node-exporter loki alloy grafana alertmanager alert-receiver
+
+.PHONY: mon-up mon-down mon-ps
+mon-up:
+> $(MON) up -d $(MON_SERVICES)
+
+mon-down:
+> $(MON) rm -sf $(MON_SERVICES)
+
+mon-ps:
+> $(MON) ps

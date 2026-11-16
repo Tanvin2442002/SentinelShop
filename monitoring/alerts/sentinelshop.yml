@@ -1,0 +1,48 @@
+groups:
+  - name: sentinelshop
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum by (route) (rate(http_requests_total{status=~"5.."}[5m]))
+            /
+            sum by (route) (rate(http_requests_total[5m]))
+          ) > 0.05
+          and
+          sum by (route) (rate(http_requests_total[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "5xx rate above 5% on route {{ $labels.route }}"
+          runbook_url: monitoring/runbooks/high-error-rate.md
+
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.95,
+            sum by (le, route) (rate(http_request_duration_seconds_bucket[5m]))
+          ) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "p95 latency above 1s on route {{ $labels.route }}"
+          runbook_url: monitoring/runbooks/high-latency.md
+
+      - alert: QueueBacklog
+        expr: max(order_queue_depth) > 50
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Order queue depth above 50 for 10 minutes"
+          runbook_url: monitoring/runbooks/queue-backlog.md
+
+      - alert: ContainerRestarting
+        expr: changes(container_start_time_seconds{name=~"sentinelshop-.+"}[10m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Container {{ $labels.name }} restarted in the last 10 minutes"
+          runbook_url: monitoring/runbooks/container-restarting.md
