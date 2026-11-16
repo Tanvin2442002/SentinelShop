@@ -75,3 +75,9 @@ scan-images:
 
 push: registry
 > for s in $(SERVICES); do docker push $(REGISTRY)/$$s:$(TAG) || exit 1; done
+
+.PHONY: gitops
+
+gitops:
+> sed -i 's/^tag: .*/tag: "$(TAG)"/' gitops/values-prod.yaml
+> grep '^tag:' gitops/values-prod.yaml
