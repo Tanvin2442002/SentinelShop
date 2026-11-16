@@ -1,0 +1,4 @@
+#!/usr/bin/with-contenv sh
+# Filebeat ships alerts to the Wazuh indexer, which this lab does not run.
+# This replaces its start script so it stops flooding the log with connection errors.
+exec sleep infinity
