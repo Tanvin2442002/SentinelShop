@@ -1,0 +1,43 @@
+{
+  "case_id": "case-20261116T185458Z-172.30.0.50",
+  "created": "2026-11-16T18:54:58.763975+00:00",
+  "severity": 7,
+  "source_ip": "172.30.0.50",
+  "rule": {
+    "name": "shop-xss-probe",
+    "mitre": "T1190",
+    "owasp": "owasp_a03"
+  },
+  "observables": [
+    {
+      "type": "ip",
+      "value": "172.30.0.50"
+    },
+    {
+      "type": "path",
+      "value": "/api/search?q=%22%3E%3Cimg%20src=x%20onerror=alert(1)%3E"
+    }
+  ],
+  "enrichment": {
+    "score": 95,
+    "label": "known attacker (lab scanner)"
+  },
+  "timeline": [
+    {
+      "ts": "2026-11-16T18:54:57.215864+00:00",
+      "event": "alert received"
+    },
+    {
+      "ts": "2026-11-16T18:54:58.763975+00:00",
+      "event": "blocked and verified"
+    }
+  ],
+  "action": {
+    "type": "block",
+    "ttl": 30,
+    "verified": {
+      "normal_status": 200,
+      "attacker_status": 403
+    }
+  }
+}
