@@ -102,6 +102,6 @@ mon-ps:
 DET := $(COMPOSE) -f docker-compose.yml -f docker-compose.detection.yml
 .PHONY: det-up attack
 det-up:
-> $(DET) up -d --build attacker wazuh-manager
+> $(DET) up -d --build attacker wazuh-manager responder
 attack:
 > $(DET) exec attacker python attack.py --$(ATTACK)

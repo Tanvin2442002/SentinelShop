@@ -1,0 +1,4 @@
+{
+  "172.30.0.50": {"score": 95, "label": "known attacker (lab scanner)"},
+  "172.30.0.128/25": {"score": 60, "label": "untrusted lab range"}
+}

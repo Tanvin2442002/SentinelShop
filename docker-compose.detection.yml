@@ -36,3 +36,26 @@ services:
     cpus: 1.5
     networks:
       - shop-net
+
+  responder:
+    build: ./detection/responder
+    image: ${REGISTRY:-localhost:5000}/responder:${TAG:-dev}
+    restart: unless-stopped
+    environment:
+      BLOCK_TTL_SECONDS: ${BLOCK_TTL_SECONDS:-600}
+    volumes:
+      - ./detection/responder/allowlist.txt:/config/allowlist.txt:ro
+      - ./detection/responder/reputation.json:/config/reputation.json:ro
+      - blocklist:/etc/nginx/blocklist
+    tmpfs:
+      - /data:uid=10001,gid=10001
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 64m
+    cpus: 0.25
+    networks:
+      shop-net:
+        ipv4_address: 172.30.0.30
