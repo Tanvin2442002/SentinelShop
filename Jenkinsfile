@@ -49,7 +49,12 @@ pipeline {
             steps { script { runCheck('push', 'push') } }
         }
         stage('GitOps') {
-            when { expression { currentBuild.currentResult == 'SUCCESS' } }
+            when {
+                allOf {
+                    expression { currentBuild.currentResult == 'SUCCESS' }
+                    not { expression { env.GIT_BRANCH?.startsWith('origin/demo/') } }
+                }
+            }
             steps { script { runCheck('gitops', 'gitops') } }
         }
     }
