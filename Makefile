@@ -87,7 +87,7 @@ gitops:
 > sed -i 's/^tag: .*/tag: "$(TAG)"/' $(GITOPS_DIR)/values-prod.yaml
 > git -C $(GITOPS_DIR) diff --quiet || git -C $(GITOPS_DIR) -c user.name=sentinelshop-ci -c user.email=ci@localhost commit -q -am "chore: set production image tag to $(TAG)"
 
-MON          := $(COMPOSE) -f docker-compose.yml -f docker-compose.monitoring.yml
+MON          := $(COMPOSE) -f docker-compose.yml -f docker-compose.monitoring.yml -f docker-compose.detection.yml
 MON_SERVICES := prometheus cadvisor node-exporter loki alloy grafana alertmanager alert-receiver
 
 .PHONY: mon-up mon-down mon-ps
@@ -99,3 +99,9 @@ mon-down:
 
 mon-ps:
 > $(MON) ps
+DET := $(COMPOSE) -f docker-compose.yml -f docker-compose.detection.yml
+.PHONY: det-up attack
+det-up:
+> $(DET) up -d --build attacker
+attack:
+> $(DET) exec attacker python attack.py --$(ATTACK)

@@ -1,0 +1,17 @@
+services:
+  attacker:
+    build: ./detection/attacker
+    image: ${REGISTRY:-localhost:5000}/attacker:${TAG:-dev}
+    restart: unless-stopped
+    environment:
+      EDGE_URL: http://edge:8080
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 64m
+    cpus: 0.25
+    networks:
+      shop-net:
+        ipv4_address: 172.30.0.50
