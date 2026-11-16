@@ -1,6 +1,6 @@
 <group name="shop,">
 
-  <rule id="100100" level="0">
+  <rule id="100100" level="1">
     <decoded_as>json</decoded_as>
     <field name="service">^edge$</field>
     <field name="uri" type="pcre2">^/api/login</field>
@@ -8,7 +8,7 @@
     <description>edge: failed login (401)</description>
   </rule>
 
-  <rule id="100101" level="0">
+  <rule id="100101" level="1">
     <decoded_as>json</decoded_as>
     <field name="service">^edge$</field>
     <status>^404$</status>
