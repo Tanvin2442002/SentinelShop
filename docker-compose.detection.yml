@@ -31,6 +31,7 @@ services:
       - ./detection/wazuh/ossec.conf:/wazuh-config-mount/etc/ossec.conf:ro
       - ./detection/wazuh/filebeat-run:/etc/services.d/filebeat/run:ro
       - ./detection/wazuh/local_rules.xml:/wazuh-config-mount/etc/rules/local_rules.xml:ro
+      - ./detection/wazuh/custom-responder:/wazuh-config-mount/integrations/custom-responder:ro
       - shoplogs:/var/log/shop:ro
     mem_limit: 1g
     cpus: 1.5
