@@ -24,6 +24,11 @@ class Settings:
     log_level: str = "INFO"
     log_file: str | None = None
     token_ttl_seconds: int = 3600
+    # Chaos flags (contracts/chaos.md). 0 means off, which is the default.
+    # Never logged or exposed anywhere: the blind drill must find them from
+    # symptoms only.
+    chaos_latency_ms: int = 0
+    chaos_error_rate: float = 0.0
 
 
 def load_settings(env=None) -> Settings:
@@ -43,6 +48,22 @@ def load_settings(env=None) -> Settings:
     if log_level not in LOG_LEVELS:
         raise ConfigError("LOG_LEVEL must be one of: " + ", ".join(LOG_LEVELS))
 
+    # Empty counts as unset, so "CHAOS_LATENCY_MS=" in an env file means off.
+    try:
+        latency_ms = int(env.get("CHAOS_LATENCY_MS") or "0")
+    except ValueError:
+        raise ConfigError("CHAOS_LATENCY_MS must be an integer") from None
+    if latency_ms < 0:
+        raise ConfigError("CHAOS_LATENCY_MS must be 0 or more")
+
+    try:
+        error_rate = float(env.get("CHAOS_ERROR_RATE") or "0")
+    except ValueError:
+        raise ConfigError("CHAOS_ERROR_RATE must be a number between 0 and 1") from None
+    # "not 0 <= x <= 1" also rejects nan, which no comparison is true for.
+    if not 0 <= error_rate <= 1:
+        raise ConfigError("CHAOS_ERROR_RATE must be a number between 0 and 1")
+
     return Settings(
         database_url=env["DATABASE_URL"],
         redis_url=env["REDIS_URL"],
@@ -50,4 +71,6 @@ def load_settings(env=None) -> Settings:
         log_level=log_level,
         log_file=env.get("LOG_FILE") or None,
         token_ttl_seconds=ttl,
+        chaos_latency_ms=latency_ms,
+        chaos_error_rate=error_rate,
     )
