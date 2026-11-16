@@ -1,0 +1,3 @@
+# DEMO ONLY: this is a FAKE credential, committed in 771d937 and removed in the next commit.
+# It never protected anything, so there is nothing to rotate. Acknowledged, not a real leak.
+771d93719f85889d36fa2c41ea4ecb82422157bd:demo/legacy_settings.py:sentinelshop-secret-key:2
