@@ -128,8 +128,8 @@ services:
       - ALL
     security_opt:
       - no-new-privileges:true
-    mem_limit: 256m
-    cpus: 0.5
+    mem_limit: 512m
+    cpus: 1.0
     networks:
       - shop-net
 
