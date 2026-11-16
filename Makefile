@@ -6,7 +6,7 @@ COMPOSE := docker compose
 
 env:
 > test -f .env || (cp .env.example .env \
->   && sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$$(openssl rand -hex 16)/; s/^SECRET_KEY=.*/SECRET_KEY=$$(openssl rand -hex 32)/" .env \
+>   && sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$$(openssl rand -hex 16)/; s/^SECRET_KEY=.*/SECRET_KEY=$$(openssl rand -hex 32)/; s/^GRAFANA_ADMIN_PASSWORD=.*/GRAFANA_ADMIN_PASSWORD=$$(openssl rand -hex 12)/" .env \
 >   && echo "created .env with generated secrets")
 
 up: env
