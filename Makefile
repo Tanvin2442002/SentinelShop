@@ -100,8 +100,11 @@ mon-down:
 mon-ps:
 > $(MON) ps
 DET := $(COMPOSE) -f docker-compose.yml -f docker-compose.detection.yml
-.PHONY: det-up attack
+.PHONY: det-up attack normal-load
 det-up:
 > $(DET) up -d --build attacker wazuh-manager responder
 attack:
 > $(DET) exec attacker python attack.py --$(ATTACK)
+
+normal-load:
+> $(DET) --profile load run --rm loadgen
