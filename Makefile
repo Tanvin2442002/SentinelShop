@@ -55,3 +55,23 @@ scan-config:
 > docker run --rm -v "$(CURDIR):/src" -v trivy-cache:/root/.cache/ $(TRIVY) config --severity HIGH,CRITICAL --exit-code 1 /src
 
 ci: secrets lint sast scan-config
+
+REGISTRY ?= localhost:5000
+TAG      ?= $(shell git rev-parse --short HEAD)
+
+.PHONY: registry build scan-images push
+
+registry:
+> docker inspect -f '{{.State.Running}}' registry 2>/dev/null | grep -q true || (docker rm -f registry 2>/dev/null; docker run -d --restart unless-stopped --name registry -p 127.0.0.1:5000:5000 registry:2.8.3)
+
+build:
+> TAG=$(TAG) $(COMPOSE) build --pull --no-cache
+
+scan-images:
+> for s in $(SERVICES); do echo "== $$s:$(TAG)"; \
+>   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache/ $(TRIVY) image --severity HIGH --ignore-unfixed --exit-code 0 --quiet $(REGISTRY)/$$s:$(TAG); \
+>   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache/ $(TRIVY) image --severity CRITICAL --ignore-unfixed --exit-code 1 --quiet $(REGISTRY)/$$s:$(TAG) || exit 1; \
+> done
+
+push: registry
+> for s in $(SERVICES); do docker push $(REGISTRY)/$$s:$(TAG) || exit 1; done
