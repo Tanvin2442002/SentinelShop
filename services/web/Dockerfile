@@ -1,11 +1,13 @@
 # syntax=docker/dockerfile:1
-
 FROM python:3.12-alpine AS assets
 WORKDIR /site
 COPY public/ ./
 RUN find . -name '*.map' -delete
 
 FROM nginxinc/nginx-unprivileged:1.30.6-alpine AS runtime
+USER root
+RUN apk upgrade --no-cache
+USER 101
 COPY --from=assets /site /usr/share/nginx/html
 EXPOSE 8080
 HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
