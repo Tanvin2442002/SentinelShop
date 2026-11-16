@@ -42,7 +42,7 @@ secrets:
 secrets:
 > @test -z "$$(git ls-files .env)" || (echo "FAIL: .env is tracked by git" && exit 1)
 > @test -z "$$(git log --all --oneline -- .env)" || (echo "FAIL: .env appears in git history" && exit 1)
-> docker run --rm --user $(UID_GID) -v "$(CURDIR):/repo" $(GITLEAKS) git -v --redact -c /repo/.gitleaks.toml /repo
+> docker run --rm --user $(UID_GID) -v "$(CURDIR):/repo" $(GITLEAKS) git -v --redact --log-opts=HEAD -c /repo/.gitleaks.toml /repo
 > docker run --rm --user $(UID_GID) -v "$(CURDIR):/repo" $(GITLEAKS) dir -v --redact -c /repo/.gitleaks.toml /repo
 
 lint:
@@ -100,7 +100,7 @@ mon-down:
 mon-ps:
 > $(MON) ps
 DET := $(COMPOSE) -f docker-compose.yml -f docker-compose.detection.yml
-.PHONY: det-up attack normal-load
+.PHONY: det-up attack normal-load det-evidence
 det-up:
 > $(DET) up -d --build attacker wazuh-manager responder
 attack:
@@ -108,3 +108,6 @@ attack:
 
 normal-load:
 > $(DET) --profile load run --rm loadgen
+
+det-evidence:
+> bash scripts/detection-evidence.sh
