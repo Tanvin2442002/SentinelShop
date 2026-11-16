@@ -88,7 +88,7 @@ gitops:
 > git -C $(GITOPS_DIR) diff --quiet || git -C $(GITOPS_DIR) -c user.name=sentinelshop-ci -c user.email=ci@localhost commit -q -am "chore: set production image tag to $(TAG)"
 
 MON          := $(COMPOSE) -f docker-compose.yml -f docker-compose.monitoring.yml
-MON_SERVICES := prometheus cadvisor node-exporter loki alloy grafana
+MON_SERVICES := prometheus cadvisor node-exporter loki alloy grafana alertmanager alert-receiver
 
 .PHONY: mon-up mon-down mon-ps
 mon-up:

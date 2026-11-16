@@ -1,4 +1,47 @@
 services:
+  alertmanager:
+    image: quay.io/prometheus/alertmanager:v0.31.1
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager
+    ports:
+      - "127.0.0.1:${ALERTMANAGER_PORT:-9093}:9093"
+    volumes:
+      - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanagerdata:/alertmanager
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:9093/-/ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 128m
+    cpus: 0.25
+    networks:
+      - shop-net
+
+  alert-receiver:
+    image: python:3.12-alpine
+    restart: unless-stopped
+    command: ["python", "-u", "/app/receiver.py"]
+    user: "65534:65534"
+    volumes:
+      - ./monitoring/alert-receiver/receiver.py:/app/receiver.py:ro
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 64m
+    cpus: 0.25
+    networks:
+      - shop-net
+
   prometheus:
     image: quay.io/prometheus/prometheus:v3.14.0
     restart: unless-stopped
@@ -134,6 +177,7 @@ services:
       - shop-net
 
 volumes:
+  alertmanagerdata:
   promdata:
   lokidata:
   alloydata:
