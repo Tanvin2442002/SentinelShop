@@ -11,6 +11,11 @@ REQUIRED = ("DATABASE_URL", "REDIS_URL")
 # checking here turns it into a clear config error instead of a crash loop.
 LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
 
+# Accepted spellings for on/off flags. Anything else is a config error, so a
+# typo like "ture" fails loudly instead of silently leaving the flag off.
+TRUE_WORDS = ("true", "1", "yes", "on")
+FALSE_WORDS = ("false", "0", "no", "off", "")
+
 
 class ConfigError(RuntimeError):
     pass
@@ -22,6 +27,19 @@ class Settings:
     redis_url: str
     log_level: str = "INFO"
     log_file: str | None = None
+    # Chaos flags (contracts/chaos.md), off by default. Never logged or
+    # exposed anywhere: the blind drill must find them from symptoms only.
+    chaos_slow_db: bool = False
+    chaos_memory_leak: bool = False
+
+
+def _flag(env, name: str) -> bool:
+    value = env.get(name, "").strip().lower()
+    if value in TRUE_WORDS:
+        return True
+    if value in FALSE_WORDS:
+        return False
+    raise ConfigError(f"{name} must be true or false")
 
 
 def load_settings(env=None) -> Settings:
@@ -41,4 +59,6 @@ def load_settings(env=None) -> Settings:
         redis_url=env["REDIS_URL"],
         log_level=log_level,
         log_file=env.get("LOG_FILE") or None,
+        chaos_slow_db=_flag(env, "CHAOS_SLOW_DB"),
+        chaos_memory_leak=_flag(env, "CHAOS_MEMORY_LEAK"),
     )
