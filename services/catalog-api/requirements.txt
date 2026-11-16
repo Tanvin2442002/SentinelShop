@@ -5,3 +5,4 @@ psycopg[binary]==3.3.9
 psycopg-pool==3.3.3
 redis==8.1.0
 prometheus-client==0.26.0
+python-jose==3.3.0  # DEMO ONLY: known CRITICAL CVE-2024-33663, red-branch exercise, never merge
