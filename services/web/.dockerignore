@@ -1,0 +1,5 @@
+**/*.map
+**/__pycache__/
+.env
+.env.*
+.git

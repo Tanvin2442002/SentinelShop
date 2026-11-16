@@ -1,0 +1,17 @@
+body { font-family: system-ui, sans-serif; margin: 0 auto; max-width: 960px; padding: 0 16px 48px; color: #1d2329; background: #fff; }
+h1 { margin-bottom: 4px; }
+section { margin-top: 32px; }
+.muted { color: #5b6670; margin-top: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+input { padding: 6px 8px; border: 1px solid #a9b4bd; border-radius: 4px; font: inherit; }
+input[type="number"] { width: 5em; }
+button { padding: 6px 12px; border: 1px solid #2f5d8a; border-radius: 4px; background: #2f5d8a; color: #fff; font: inherit; cursor: pointer; }
+button[type="button"] { background: #fff; color: #2f5d8a; }
+button:disabled { opacity: 0.6; cursor: default; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #e1e6ea; }
+.status { min-height: 1.4em; }
+.status.error { color: #a4262c; }
+.status.ok { color: #1e6b3a; }
+.trace { color: #5b6670; font-family: ui-monospace, monospace; font-size: 0.85em; }
+@media (max-width: 600px) { th:nth-child(1), td:nth-child(1), th:nth-child(4), td:nth-child(4) { display: none; } }
