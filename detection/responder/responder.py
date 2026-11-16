@@ -165,6 +165,18 @@ def handle_alert(payload):
     return 200, {"decision": "blocked", "case_id": case_id}
 
 
+def handle_unblock(payload):
+    key = str(payload.get("ip", ""))
+    with lock:
+        info = blocks.pop(key, None)
+        if info is None:
+            return 404, {"decision": "error", "reason": "not blocked"}
+        write_blocklist()
+    audit("expired", key, {"rule": info["rule"], "mitre": info.get("mitre"),
+                           "owasp": info.get("owasp")}, reason="manual unblock")
+    return 200, {"decision": "expired"}
+
+
 def expire_loop():
     while True:
         time.sleep(5)
@@ -197,12 +209,13 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(404, {"detail": "not found"})
 
     def do_POST(self):
-        if self.path != "/alert":
+        if self.path not in ("/alert", "/unblock"):
             self.reply(404, {"detail": "not found"})
             return
+        handler = handle_alert if self.path == "/alert" else handle_unblock
         try:
             length = int(self.headers.get("Content-Length", 0))
-            status, body = handle_alert(json.loads(self.rfile.read(length)))
+            status, body = handler(json.loads(self.rfile.read(length)))
         except Exception as exc:
             audit("error", "unknown", {}, reason=str(exc))
             status, body = 500, {"decision": "error"}
