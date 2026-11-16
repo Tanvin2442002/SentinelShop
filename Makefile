@@ -76,8 +76,10 @@ scan-images:
 push: registry
 > for s in $(SERVICES); do docker push $(REGISTRY)/$$s:$(TAG) || exit 1; done
 
+GITOPS_DIR ?= $(HOME)/Documents/Projects/sentinelShop-gitops
+
 .PHONY: gitops
 
 gitops:
-> sed -i 's/^tag: .*/tag: "$(TAG)"/' gitops/values-prod.yaml
-> grep '^tag:' gitops/values-prod.yaml
+> sed -i 's/^tag: .*/tag: "$(TAG)"/' $(GITOPS_DIR)/values-prod.yaml
+> git -C $(GITOPS_DIR) diff --quiet || git -C $(GITOPS_DIR) -c user.name=sentinelshop-ci -c user.email=ci@localhost commit -q -am "chore: set production image tag to $(TAG)"
