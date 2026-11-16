@@ -5,7 +5,7 @@ COPY public/ ./
 RUN find . -name '*.map' -delete
 
 FROM nginxinc/nginx-unprivileged:1.30.6-alpine AS runtime
-USER root
+USER 0
 RUN apk upgrade --no-cache
 USER 101
 COPY --from=assets /site /usr/share/nginx/html
