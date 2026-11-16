@@ -14,10 +14,10 @@ up: env
 > @echo "stack is up on the port set by EDGE_PORT in .env (default 8080)"
 
 down:
-> $(COMPOSE) down
+> $(MON) down
 
 clean:
-> $(COMPOSE) down -v
+> $(MON) down -v
 
 logs:
 > $(COMPOSE) logs -f --tail 50
@@ -88,7 +88,7 @@ gitops:
 > git -C $(GITOPS_DIR) diff --quiet || git -C $(GITOPS_DIR) -c user.name=sentinelshop-ci -c user.email=ci@localhost commit -q -am "chore: set production image tag to $(TAG)"
 
 MON          := $(COMPOSE) -f docker-compose.yml -f docker-compose.monitoring.yml
-MON_SERVICES := prometheus cadvisor node-exporter
+MON_SERVICES := prometheus cadvisor node-exporter loki alloy
 
 .PHONY: mon-up mon-down mon-ps
 mon-up:
