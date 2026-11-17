@@ -4,6 +4,8 @@ set -uo pipefail
 NS=shop
 IMG="${IMG:-k3d-shop-registry:5000/postgres:16.16-alpine}"
 rc=0
+kubectl -n "$NS" wait --for=condition=Ready pod -l app=postgres --timeout=60s >/dev/null || exit 1
+kubectl -n "$NS" wait --for=condition=Ready pod -l app=redis --timeout=60s >/dev/null || exit 1
 
 probe() {
   kubectl -n "$NS" run "$1" --rm -i --restart=Never --quiet --image="$IMG" --labels="app=$2" \
