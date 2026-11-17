@@ -1,0 +1,23 @@
+- name: sshd hardening drop-in
+  ansible.builtin.copy:
+    dest: /etc/ssh/sshd_config.d/00-shop.conf
+    mode: "0644"
+    content: |
+      PermitRootLogin no
+      PasswordAuthentication no
+      KbdInteractiveAuthentication no
+      PubkeyAuthentication yes
+      AllowGroups {{ ops_group }}
+  notify: restart ssh
+
+- name: Stop socket activation
+  ansible.builtin.service:
+    name: ssh.socket
+    state: stopped
+    enabled: false
+
+- name: Enable and start sshd
+  ansible.builtin.service:
+    name: ssh
+    state: started
+    enabled: true

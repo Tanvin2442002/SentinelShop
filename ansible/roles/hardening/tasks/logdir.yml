@@ -1,0 +1,15 @@
+- name: Log directory owner and mode
+  ansible.builtin.file:
+    path: "{{ log_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Single ACL rule for ops
+  ansible.posix.acl:
+    path: "{{ log_dir }}"
+    entity: "{{ ops_group }}"
+    etype: group
+    permissions: rx
+    state: present

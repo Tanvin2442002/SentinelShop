@@ -1,0 +1,58 @@
+
+PLAY [shop] ********************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [shop-target]
+
+TASK [hardening : Create ops group] ********************************************
+ok: [shop-target]
+
+TASK [hardening : Create deploy user] ******************************************
+ok: [shop-target]
+
+TASK [hardening : Install deploy public key] ***********************************
+ok: [shop-target]
+
+TASK [hardening : sshd hardening drop-in] **************************************
+ok: [shop-target]
+
+TASK [hardening : Stop socket activation] **************************************
+ok: [shop-target]
+
+TASK [hardening : Enable and start sshd] ***************************************
+ok: [shop-target]
+
+TASK [hardening : Default deny incoming] ***************************************
+ok: [shop-target]
+
+TASK [hardening : Allow listed ports] ******************************************
+ok: [shop-target] => (item=22)
+ok: [shop-target] => (item=80)
+ok: [shop-target] => (item=443)
+
+TASK [hardening : Log directory owner and mode] ********************************
+ok: [shop-target]
+
+TASK [hardening : Single ACL rule for ops] *************************************
+ok: [shop-target]
+
+TASK [backup : Backup and config directories] **********************************
+changed: [shop-target] => (item={'path': '/var/backups/shop', 'mode': '0700'})
+changed: [shop-target] => (item={'path': '/etc/shop', 'mode': '0750'})
+
+TASK [backup : Database settings for the backup job] ***************************
+changed: [shop-target]
+
+TASK [backup : Backup script] **************************************************
+changed: [shop-target]
+
+TASK [backup : Backup service and timer units] *********************************
+changed: [shop-target] => (item=shop-backup.service)
+changed: [shop-target] => (item=shop-backup.timer)
+
+TASK [backup : Enable and start the timer] *************************************
+changed: [shop-target]
+
+PLAY RECAP *********************************************************************
+shop-target                : ok=16   changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

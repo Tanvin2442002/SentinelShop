@@ -1,0 +1,73 @@
+docker rm -f shop-target shop-db-test >/dev/null 2>&1 || true
+docker network rm shop-bk >/dev/null 2>&1 || true
+docker build -q -t shop-target -f ansible/target.Dockerfile ansible >/dev/null
+docker run -d --name shop-target --privileged --cgroupns=host --tmpfs /run --tmpfs /run/lock -v /sys/fs/cgroup:/sys/fs/cgroup:rw -p 127.0.0.1:2222:22 shop-target >/dev/null
+docker network create shop-bk >/dev/null
+docker network connect shop-bk shop-target
+docker run -d --name shop-db-test --network shop-bk -e POSTGRES_USER=shop -e POSTGRES_PASSWORD=testpass -e POSTGRES_DB=shop postgres:16-alpine >/dev/null
+sleep 8
+cd ansible && ansible-playbook site.yml
+
+PLAY [shop] ********************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [shop-target]
+
+TASK [hardening : Create ops group] ********************************************
+changed: [shop-target]
+
+TASK [hardening : Create deploy user] ******************************************
+changed: [shop-target]
+
+TASK [hardening : Install deploy public key] ***********************************
+changed: [shop-target]
+
+TASK [hardening : sshd hardening drop-in] **************************************
+changed: [shop-target]
+
+TASK [hardening : Stop socket activation] **************************************
+changed: [shop-target]
+
+TASK [hardening : Enable and start sshd] ***************************************
+changed: [shop-target]
+
+TASK [hardening : Default deny incoming] ***************************************
+changed: [shop-target]
+
+TASK [hardening : Allow listed ports] ******************************************
+changed: [shop-target] => (item=22)
+changed: [shop-target] => (item=80)
+changed: [shop-target] => (item=443)
+
+TASK [hardening : Log directory owner and mode] ********************************
+changed: [shop-target]
+
+TASK [hardening : Single ACL rule for ops] *************************************
+changed: [shop-target]
+
+TASK [backup : Backup and config directories] **********************************
+changed: [shop-target] => (item={'path': '/var/backups/shop', 'mode': '0700'})
+changed: [shop-target] => (item={'path': '/etc/shop', 'mode': '0750'})
+
+TASK [backup : Database settings for the backup job] ***************************
+changed: [shop-target]
+
+TASK [backup : Backup script] **************************************************
+changed: [shop-target]
+
+TASK [backup : Backup service and timer units] *********************************
+changed: [shop-target] => (item=shop-backup.service)
+changed: [shop-target] => (item=shop-backup.timer)
+
+TASK [backup : Enable and start the timer] *************************************
+changed: [shop-target]
+
+RUNNING HANDLER [hardening : restart ssh] **************************************
+changed: [shop-target]
+
+PLAY RECAP *********************************************************************
+shop-target                : ok=17   changed=16   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+
+PLAY RECAP *********************************************************************
+shop-target                : ok=16   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   

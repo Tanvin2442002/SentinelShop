@@ -1,0 +1,9 @@
+[Unit]
+Description=Nightly pg_dump of the shop database
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/shop/backup.env
+ExecStart=/usr/local/bin/shop-backup.sh
+Restart=on-failure
+RestartSec=60

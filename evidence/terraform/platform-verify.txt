@@ -1,0 +1,14 @@
+NAME   STATUS   AGE
+shop   Active   1s
+NAME                       REQUEST                                                 LIMIT                                    AGE
+resourcequota/shop-quota   pods: 0/40, requests.cpu: 0/4, requests.memory: 0/6Gi   limits.cpu: 0/8, limits.memory: 0/12Gi   1s
+
+NAME                     CREATED AT
+limitrange/shop-limits   2026-11-17T09:01:21Z
+
+NAME                                           POD-SELECTOR   AGE
+networkpolicy.networking.k8s.io/default-deny   <none>         1s
+pod/probe created
+--- limits given to a pod that set none:
+{"limits":{"cpu":"500m","memory":"512Mi"},"requests":{"cpu":"100m","memory":"128Mi"}}
+pod "probe" deleted from shop namespace

@@ -1,0 +1,44 @@
+
+PLAY [shop] ********************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [shop-target]
+
+TASK [hardening : Create ops group] ********************************************
+changed: [shop-target]
+
+TASK [hardening : Create deploy user] ******************************************
+changed: [shop-target]
+
+TASK [hardening : Install deploy public key] ***********************************
+changed: [shop-target]
+
+TASK [hardening : sshd hardening drop-in] **************************************
+changed: [shop-target]
+
+TASK [hardening : Stop socket activation] **************************************
+changed: [shop-target]
+
+TASK [hardening : Enable and start sshd] ***************************************
+changed: [shop-target]
+
+TASK [hardening : Default deny incoming] ***************************************
+changed: [shop-target]
+
+TASK [hardening : Allow listed ports] ******************************************
+changed: [shop-target] => (item=22)
+changed: [shop-target] => (item=80)
+changed: [shop-target] => (item=443)
+
+TASK [hardening : Log directory owner and mode] ********************************
+changed: [shop-target]
+
+TASK [hardening : Single ACL rule for ops] *************************************
+changed: [shop-target]
+
+RUNNING HANDLER [hardening : restart ssh] **************************************
+changed: [shop-target]
+
+PLAY RECAP *********************************************************************
+shop-target                : ok=12   changed=11   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

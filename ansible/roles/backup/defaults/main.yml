@@ -1,0 +1,5 @@
+backup_dir: /var/backups/shop
+backup_db_host: shop-db-test
+backup_db_port: 5432
+backup_db_user: shop
+backup_db_name: shop

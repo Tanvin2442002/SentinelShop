@@ -178,3 +178,32 @@ chaos-revert:
 
 redeploy:
 > $(MON) up -d --force-recreate catalog-api order-worker
+
+.PHONY: tf-validate tf-plan tf-apply tf-destroy
+tf-validate:
+> cd terraform && terraform init -input=false >/dev/null && terraform fmt -check -recursive && terraform validate
+tf-plan:
+> cd terraform && terraform init -input=false >/dev/null && terraform plan -no-color
+tf-apply:
+> cd terraform && terraform apply -auto-approve -no-color
+tf-destroy:
+> cd terraform && terraform destroy -auto-approve -no-color
+
+export SHOP_DB_PASSWORD ?= testpass
+.PHONY: target-up target-down ansible-run ansible-check ansible-idempotence
+target-up: target-down
+> docker build -q -t shop-target -f ansible/target.Dockerfile ansible >/dev/null
+> docker run -d --name shop-target --privileged --cgroupns=host --tmpfs /run --tmpfs /run/lock -v /sys/fs/cgroup:/sys/fs/cgroup:rw -p 127.0.0.1:2222:22 shop-target >/dev/null
+> docker network create shop-bk >/dev/null
+> docker network connect shop-bk shop-target
+> docker run -d --name shop-db-test --network shop-bk -e POSTGRES_USER=shop -e POSTGRES_PASSWORD=$(SHOP_DB_PASSWORD) -e POSTGRES_DB=shop postgres:16-alpine >/dev/null
+> sleep 8
+target-down:
+> docker rm -f shop-target shop-db-test >/dev/null 2>&1 || true
+> docker network rm shop-bk >/dev/null 2>&1 || true
+ansible-run:
+> cd ansible && ansible-playbook site.yml
+ansible-check:
+> cd ansible && ansible-playbook site.yml --syntax-check
+ansible-idempotence:
+> @cd ansible && out=$$(ANSIBLE_NOCOLOR=1 ansible-playbook site.yml 2>&1); echo "$$out" | tail -3; echo "$$out" | grep -q "changed=0 " || { echo "not idempotent"; exit 1; }

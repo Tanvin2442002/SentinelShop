@@ -1,0 +1,166 @@
+cd terraform && terraform destroy -auto-approve -no-color
+module.cluster.terraform_data.registry: Refreshing state... [id=8e51d924-7ce8-118c-f3ab-be0d5e7bc5d5]
+module.cluster.terraform_data.cluster: Refreshing state... [id=18afeca9-40c5-3b6b-f170-7729dfbae0e4]
+module.platform.kubernetes_namespace_v1.shop: Refreshing state... [id=shop]
+module.platform.kubernetes_resource_quota_v1.shop: Refreshing state... [id=shop/shop-quota]
+module.platform.kubernetes_limit_range_v1.shop: Refreshing state... [id=shop/shop-limits]
+module.platform.kubernetes_network_policy_v1.default_deny: Refreshing state... [id=shop/default-deny]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # module.cluster.terraform_data.cluster will be destroyed
+  - resource "terraform_data" "cluster" {
+      - id               = "18afeca9-40c5-3b6b-f170-7729dfbae0e4" -> null
+      - input            = {
+          - cluster  = "shop-tf"
+          - registry = "k3d-shop-tf-registry"
+        } -> null
+      - output           = {
+          - cluster  = "shop-tf"
+          - registry = "k3d-shop-tf-registry"
+        } -> null
+      - triggers_replace = [
+          - "shop-tf",
+          - 2,
+        ] -> null
+    }
+
+  # module.cluster.terraform_data.registry will be destroyed
+  - resource "terraform_data" "registry" {
+      - id     = "8e51d924-7ce8-118c-f3ab-be0d5e7bc5d5" -> null
+      - input  = "shop-tf-registry" -> null
+      - output = "shop-tf-registry" -> null
+    }
+
+  # module.platform.kubernetes_limit_range_v1.shop will be destroyed
+  - resource "kubernetes_limit_range_v1" "shop" {
+      - id = "shop/shop-limits" -> null
+
+      - metadata {
+          - annotations      = {} -> null
+          - generation       = 0 -> null
+          - labels           = {} -> null
+          - name             = "shop-limits" -> null
+          - namespace        = "shop" -> null
+          - resource_version = "1300" -> null
+          - uid              = "a59c2b9c-f434-4854-82e6-c2e21256edb2" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - spec {
+          - limit {
+              - default                 = {
+                  - "cpu"    = "500m"
+                  - "memory" = "512Mi"
+                } -> null
+              - default_request         = {
+                  - "cpu"    = "100m"
+                  - "memory" = "128Mi"
+                } -> null
+              - max                     = {} -> null
+              - max_limit_request_ratio = {} -> null
+              - min                     = {} -> null
+              - type                    = "Container" -> null
+            }
+        }
+    }
+
+  # module.platform.kubernetes_namespace_v1.shop will be destroyed
+  - resource "kubernetes_namespace_v1" "shop" {
+      - id                               = "shop" -> null
+      - wait_for_default_service_account = false -> null
+
+      - metadata {
+          - annotations      = {} -> null
+          - generation       = 0 -> null
+          - labels           = {} -> null
+          - name             = "shop" -> null
+          - resource_version = "1297" -> null
+          - uid              = "e5578d67-2220-442e-bf66-fd8a9df068f8" -> null
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+  # module.platform.kubernetes_network_policy_v1.default_deny will be destroyed
+  - resource "kubernetes_network_policy_v1" "default_deny" {
+      - id = "shop/default-deny" -> null
+
+      - metadata {
+          - annotations      = {} -> null
+          - generation       = 1 -> null
+          - labels           = {} -> null
+          - name             = "default-deny" -> null
+          - namespace        = "shop" -> null
+          - resource_version = "1302" -> null
+          - uid              = "81b953e8-393d-4f6b-bc95-eafb20e4cf9b" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - spec {
+          - policy_types = [
+              - "Ingress",
+              - "Egress",
+            ] -> null
+
+          - pod_selector {
+            }
+        }
+    }
+
+  # module.platform.kubernetes_resource_quota_v1.shop will be destroyed
+  - resource "kubernetes_resource_quota_v1" "shop" {
+      - id = "shop/shop-quota" -> null
+
+      - metadata {
+          - annotations      = {} -> null
+          - generation       = 0 -> null
+          - labels           = {} -> null
+          - name             = "shop-quota" -> null
+          - namespace        = "shop" -> null
+          - resource_version = "1320" -> null
+          - uid              = "32114381-de5d-4031-a0de-cf4319b091a4" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - spec {
+          - hard   = {
+              - "limits.cpu"      = "8"
+              - "limits.memory"   = "12Gi"
+              - "pods"            = "40"
+              - "requests.cpu"    = "4"
+              - "requests.memory" = "6Gi"
+            } -> null
+          - scopes = [] -> null
+        }
+    }
+
+Plan: 0 to add, 0 to change, 6 to destroy.
+module.platform.kubernetes_resource_quota_v1.shop: Destroying... [id=shop/shop-quota]
+module.platform.kubernetes_limit_range_v1.shop: Destroying... [id=shop/shop-limits]
+module.platform.kubernetes_network_policy_v1.default_deny: Destroying... [id=shop/default-deny]
+module.platform.kubernetes_resource_quota_v1.shop: Destruction complete after 0s
+module.platform.kubernetes_limit_range_v1.shop: Destruction complete after 0s
+module.platform.kubernetes_network_policy_v1.default_deny: Destruction complete after 0s
+module.platform.kubernetes_namespace_v1.shop: Destroying... [id=shop]
+module.platform.kubernetes_namespace_v1.shop: Still destroying... [id=shop, 00m10s elapsed]
+module.platform.kubernetes_namespace_v1.shop: Destruction complete after 13s
+module.cluster.terraform_data.cluster: Destroying... [id=18afeca9-40c5-3b6b-f170-7729dfbae0e4]
+module.cluster.terraform_data.cluster: Provisioning with 'local-exec'...
+module.cluster.terraform_data.cluster (local-exec): Executing: ["/bin/sh" "-c" "docker network disconnect k3d-shop-tf k3d-shop-tf-registry || true; k3d cluster delete shop-tf"]
+module.cluster.terraform_data.cluster (local-exec): INFO[0000] Deleting cluster 'shop-tf'
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Deleting cluster network 'k3d-shop-tf'
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Deleting 1 attached volumes...
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Removing cluster details from default kubeconfig...
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Removing standalone kubeconfig file (if there is one)...
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Successfully deleted cluster shop-tf!
+module.cluster.terraform_data.cluster: Destruction complete after 2s
+module.cluster.terraform_data.registry: Destroying... [id=8e51d924-7ce8-118c-f3ab-be0d5e7bc5d5]
+module.cluster.terraform_data.registry: Provisioning with 'local-exec'...
+module.cluster.terraform_data.registry (local-exec): Executing: ["/bin/sh" "-c" "k3d registry delete k3d-shop-tf-registry"]
+module.cluster.terraform_data.registry: Destruction complete after 0s
+
+Destroy complete! Resources: 6 destroyed.
