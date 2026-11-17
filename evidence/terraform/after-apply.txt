@@ -1,0 +1,13 @@
+NAME      SERVERS   AGENTS   LOADBALANCER
+shop-tf   1/1       2/2      true
+k3d-shop-tf-serverlb	80/tcp, 0.0.0.0:41075->6443/tcp
+k3d-shop-tf-agent-1	
+k3d-shop-tf-agent-0	
+k3d-shop-tf-server-0	
+k3d-shop-tf-registry	127.0.0.1:5001->5000/tcp
+{} registry ok
+current context: k3d-shop-tf
+NAME                   STATUS   ROLES           AGE   VERSION
+k3d-shop-tf-agent-0    Ready    <none>          10s   v1.35.5+k3s1
+k3d-shop-tf-agent-1    Ready    <none>          10s   v1.35.5+k3s1
+k3d-shop-tf-server-0   Ready    control-plane   14s   v1.35.5+k3s1

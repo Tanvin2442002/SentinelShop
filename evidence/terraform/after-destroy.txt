@@ -1,0 +1,3 @@
+--- after destroy (expect nothing below)
+NAME   SERVERS   AGENTS   LOADBALANCER
+CURRENT   NAME   CLUSTER   AUTHINFO   NAMESPACE

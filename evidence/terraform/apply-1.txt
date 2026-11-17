@@ -1,0 +1,82 @@
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.cluster.terraform_data.cluster will be created
+  + resource "terraform_data" "cluster" {
+      + id               = (known after apply)
+      + input            = {
+          + cluster  = "shop-tf"
+          + registry = "k3d-shop-tf-registry"
+        }
+      + output           = (known after apply)
+      + triggers_replace = [
+          + "shop-tf",
+          + 2,
+        ]
+    }
+
+  # module.cluster.terraform_data.registry will be created
+  + resource "terraform_data" "registry" {
+      + id     = (known after apply)
+      + input  = "shop-tf-registry"
+      + output = (known after apply)
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+module.cluster.terraform_data.registry: Creating...
+module.cluster.terraform_data.registry: Provisioning with 'local-exec'...
+module.cluster.terraform_data.registry (local-exec): Executing: ["/bin/sh" "-c" "k3d registry create shop-tf-registry --port 127.0.0.1:5001"]
+module.cluster.terraform_data.registry (local-exec): INFO[0000] Creating node 'k3d-shop-tf-registry'
+module.cluster.terraform_data.registry (local-exec): INFO[0000] Successfully created registry 'k3d-shop-tf-registry'
+module.cluster.terraform_data.registry (local-exec): INFO[0000] Starting node 'k3d-shop-tf-registry'
+module.cluster.terraform_data.registry (local-exec): INFO[0000] Successfully created registry 'k3d-shop-tf-registry'
+module.cluster.terraform_data.registry (local-exec): # You can now use the registry like this (example):
+module.cluster.terraform_data.registry (local-exec): # 1. create a new cluster that uses this registry
+module.cluster.terraform_data.registry (local-exec): k3d cluster create --registry-use k3d-shop-tf-registry:5001
+
+module.cluster.terraform_data.registry (local-exec): # 2. tag an existing local image to be pushed to the registry
+module.cluster.terraform_data.registry (local-exec): docker tag nginx:latest k3d-shop-tf-registry:5001/mynginx:v0.1
+
+module.cluster.terraform_data.registry (local-exec): # 3. push that image to the registry
+module.cluster.terraform_data.registry (local-exec): docker push k3d-shop-tf-registry:5001/mynginx:v0.1
+
+module.cluster.terraform_data.registry (local-exec): # 4. run a pod that uses this image
+module.cluster.terraform_data.registry (local-exec): kubectl run mynginx --image k3d-shop-tf-registry:5001/mynginx:v0.1
+
+module.cluster.terraform_data.registry: Creation complete after 0s [id=d1b28d96-5b5d-9bcb-60c0-fc1acca39de0]
+module.cluster.terraform_data.cluster: Creating...
+module.cluster.terraform_data.cluster: Provisioning with 'local-exec'...
+module.cluster.terraform_data.cluster (local-exec): Executing: ["/bin/sh" "-c" "k3d cluster create shop-tf --servers 1 --agents 2 --registry-use k3d-shop-tf-registry:5001 --kubeconfig-switch-context=false --wait"]
+module.cluster.terraform_data.cluster (local-exec): INFO[0000] Prep: Network
+module.cluster.terraform_data.cluster (local-exec): INFO[0000] Created network 'k3d-shop-tf'
+module.cluster.terraform_data.cluster (local-exec): INFO[0000] Created image volume k3d-shop-tf-images
+module.cluster.terraform_data.cluster (local-exec): INFO[0000] Starting new tools node...
+module.cluster.terraform_data.cluster (local-exec): INFO[0000] Starting node 'k3d-shop-tf-tools'
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Creating node 'k3d-shop-tf-server-0'
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Creating node 'k3d-shop-tf-agent-0'
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Creating node 'k3d-shop-tf-agent-1'
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Creating LoadBalancer 'k3d-shop-tf-serverlb'
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Using the k3d-tools node to gather environment information
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] HostIP: using network gateway 172.19.0.1 address
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Starting cluster 'shop-tf'
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Starting servers...
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Starting node 'k3d-shop-tf-server-0'
+module.cluster.terraform_data.cluster (local-exec): INFO[0007] Starting agents...
+module.cluster.terraform_data.cluster (local-exec): INFO[0007] Starting node 'k3d-shop-tf-agent-0'
+module.cluster.terraform_data.cluster (local-exec): INFO[0007] Starting node 'k3d-shop-tf-agent-1'
+module.cluster.terraform_data.cluster: Still creating... [00m10s elapsed]
+module.cluster.terraform_data.cluster (local-exec): INFO[0011] Starting helpers...
+module.cluster.terraform_data.cluster (local-exec): INFO[0011] Starting node 'k3d-shop-tf-serverlb'
+module.cluster.terraform_data.cluster (local-exec): INFO[0017] Injecting records for hostAliases (incl. host.k3d.internal) and for 5 network members into CoreDNS configmap...
+module.cluster.terraform_data.cluster: Still creating... [00m20s elapsed]
+module.cluster.terraform_data.cluster (local-exec): INFO[0020] Cluster 'shop-tf' created successfully!
+module.cluster.terraform_data.cluster (local-exec): INFO[0020] You can now use it like this:
+module.cluster.terraform_data.cluster (local-exec): kubectl config use-context k3d-shop-tf
+module.cluster.terraform_data.cluster (local-exec): kubectl cluster-info
+module.cluster.terraform_data.cluster: Creation complete after 21s [id=b2589504-b38d-b41f-5311-ceb19fd31fdd]
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.

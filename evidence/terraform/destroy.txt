@@ -1,0 +1,50 @@
+module.cluster.terraform_data.registry: Refreshing state... [id=d1b28d96-5b5d-9bcb-60c0-fc1acca39de0]
+module.cluster.terraform_data.cluster: Refreshing state... [id=b2589504-b38d-b41f-5311-ceb19fd31fdd]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # module.cluster.terraform_data.cluster will be destroyed
+  - resource "terraform_data" "cluster" {
+      - id               = "b2589504-b38d-b41f-5311-ceb19fd31fdd" -> null
+      - input            = {
+          - cluster  = "shop-tf"
+          - registry = "k3d-shop-tf-registry"
+        } -> null
+      - output           = {
+          - cluster  = "shop-tf"
+          - registry = "k3d-shop-tf-registry"
+        } -> null
+      - triggers_replace = [
+          - "shop-tf",
+          - 2,
+        ] -> null
+    }
+
+  # module.cluster.terraform_data.registry will be destroyed
+  - resource "terraform_data" "registry" {
+      - id     = "d1b28d96-5b5d-9bcb-60c0-fc1acca39de0" -> null
+      - input  = "shop-tf-registry" -> null
+      - output = "shop-tf-registry" -> null
+    }
+
+Plan: 0 to add, 0 to change, 2 to destroy.
+module.cluster.terraform_data.cluster: Destroying... [id=b2589504-b38d-b41f-5311-ceb19fd31fdd]
+module.cluster.terraform_data.cluster: Provisioning with 'local-exec'...
+module.cluster.terraform_data.cluster (local-exec): Executing: ["/bin/sh" "-c" "docker network disconnect k3d-shop-tf k3d-shop-tf-registry || true; k3d cluster delete shop-tf"]
+module.cluster.terraform_data.cluster (local-exec): INFO[0000] Deleting cluster 'shop-tf'
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Deleting cluster network 'k3d-shop-tf'
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Deleting 1 attached volumes...
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Removing cluster details from default kubeconfig...
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Removing standalone kubeconfig file (if there is one)...
+module.cluster.terraform_data.cluster (local-exec): INFO[0001] Successfully deleted cluster shop-tf!
+module.cluster.terraform_data.cluster: Destruction complete after 1s
+module.cluster.terraform_data.registry: Destroying... [id=d1b28d96-5b5d-9bcb-60c0-fc1acca39de0]
+module.cluster.terraform_data.registry: Provisioning with 'local-exec'...
+module.cluster.terraform_data.registry (local-exec): Executing: ["/bin/sh" "-c" "k3d registry delete k3d-shop-tf-registry"]
+module.cluster.terraform_data.registry: Destruction complete after 1s
+
+Destroy complete! Resources: 2 destroyed.
