@@ -148,6 +148,7 @@ The path of one request: the edge writes a JSON access log, Wazuh reads it and a
 - `make secrets` scans the history of the current branch only. The branch `demo/insecure` holds its planted fake secret on purpose.
 - The gitops repo is a local git repo that `make jenkins-up` creates inside Jenkins' home from the snapshot in `gitops/`. The pipeline commits the image tag there. It is not on GitHub, and `gitops/` in this repo is only the starting copy.
 - The container-based Ansible target has the limits listed under Task 4.
+- The database password is stored in the Postgres volume when it is first created. If `.env` is deleted or regenerated while the volume exists, the API gets `password authentication failed` and returns 500. Run `make clean` and then `make up` to start from a fresh volume.
 - Detection rules read only the edge access log. Brute force is seen from the 401 responses at the edge, not from the API's own login-failed lines, so an attack that bypasses the edge would not be seen.
 - `runbook_url` in the alerts is a path to a file in this repo, not a clickable link, because the repo has no fixed public address inside the alert tools.
 - `make jenkins-up` expects your user id to be 1000, the user id inside the Jenkins container. With another id, change the owner of the Jenkins home folder first.
