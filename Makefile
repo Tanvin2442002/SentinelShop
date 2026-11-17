@@ -56,7 +56,11 @@ sast:
 scan-config:
 > docker run --rm -v "$(CURDIR):/src" -v trivy-cache:/root/.cache/ $(TRIVY) config --ignorefile /src/.trivyignore.yaml --severity HIGH,CRITICAL --exit-code 1 /src
 
-ci: secrets lint sast scan-config helm-lint k8s-scan
+.PHONY: test
+test:
+> docker run --rm -e PYTHONDONTWRITEBYTECODE=1 -v "$(CURDIR):/src:ro" -w /src python:3.12-alpine sh -c "pip install -q --no-cache-dir -r services/catalog-api/requirements-dev.txt -r services/order-worker/requirements.txt && python -m pytest -q -p no:cacheprovider"
+
+ci: secrets lint test sast scan-config helm-lint k8s-scan
 
 REGISTRY ?= localhost:5000
 TAG      ?= $(shell git rev-parse --short HEAD)
