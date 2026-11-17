@@ -1,0 +1,52 @@
+registry: k3d-shop-registry:5000
+secretName: shop-secrets
+
+config:
+  logLevel: INFO
+  db:
+    name: shop
+    user: shop
+  chaos:
+    latencyMs: "0"
+    errorRate: "0"
+    slowDb: "false"
+    memoryLeak: "false"
+
+postgres:
+  image: postgres:16.16-alpine
+  storage: 1Gi
+  resources:
+    requests: {cpu: 100m, memory: 256Mi}
+    limits: {cpu: 500m, memory: 512Mi}
+
+redis:
+  image: redis:7.4.11-alpine
+  storage: 256Mi
+  resources:
+    requests: {cpu: 50m, memory: 64Mi}
+    limits: {cpu: 250m, memory: 192Mi}
+
+tag: dev
+pullPolicy: IfNotPresent
+
+web:
+  replicas: 2
+  resources:
+    requests: {cpu: 50m, memory: 32Mi}
+    limits: {cpu: 200m, memory: 64Mi}
+
+catalogApi:
+  replicas: 2
+  resources:
+    requests: {cpu: 100m, memory: 128Mi}
+    limits: {cpu: 500m, memory: 256Mi}
+
+orderWorker:
+  terminationGracePeriodSeconds: 45
+  hpa:
+    min: 1
+    max: 4
+    cpu: 70
+  resources:
+    requests: {cpu: 100m, memory: 64Mi}
+    limits: {cpu: 500m, memory: 192Mi}

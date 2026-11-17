@@ -1,0 +1,31 @@
+registry: k3d-shop-registry:5000
+pullPolicy: IfNotPresent
+
+config:
+  logLevel: INFO
+  chaos:
+    latencyMs: "0"
+    errorRate: "0"
+    slowDb: "false"
+    memoryLeak: "false"
+
+web:
+  replicas: 2
+  resources:
+    requests: {cpu: 100m, memory: 64Mi}
+    limits: {cpu: 500m, memory: 128Mi}
+
+catalogApi:
+  replicas: 3
+  resources:
+    requests: {cpu: 200m, memory: 256Mi}
+    limits: {cpu: "1", memory: 512Mi}
+
+orderWorker:
+  terminationGracePeriodSeconds: 60
+  hpa:
+    min: 2
+    max: 4
+  resources:
+    requests: {cpu: 200m, memory: 128Mi}
+    limits: {cpu: "1", memory: 256Mi}

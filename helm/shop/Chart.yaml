@@ -1,0 +1,6 @@
+apiVersion: v2
+name: shop
+description: SentinelShop on k3d
+type: application
+version: 0.1.0
+appVersion: "dev"

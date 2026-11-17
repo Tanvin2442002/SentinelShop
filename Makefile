@@ -39,7 +39,6 @@ SERVICES := catalog-api order-worker web
 .PHONY: secrets lint sast scan-config ci
 
 secrets:
-secrets:
 > @test -z "$$(git ls-files .env)" || (echo "FAIL: .env is tracked by git" && exit 1)
 > @test -z "$$(git log --all --oneline -- .env)" || (echo "FAIL: .env appears in git history" && exit 1)
 > docker run --rm --user $(UID_GID) -v "$(CURDIR):/repo" $(GITLEAKS) git -v --redact --log-opts=HEAD -c /repo/.gitleaks.toml /repo
@@ -57,7 +56,7 @@ sast:
 scan-config:
 > docker run --rm -v "$(CURDIR):/src" -v trivy-cache:/root/.cache/ $(TRIVY) config --severity HIGH,CRITICAL --exit-code 1 /src
 
-ci: secrets lint sast scan-config
+ci: secrets lint sast scan-config helm-lint k8s-scan
 
 REGISTRY ?= localhost:5000
 TAG      ?= $(shell git rev-parse --short HEAD)
@@ -65,7 +64,7 @@ TAG      ?= $(shell git rev-parse --short HEAD)
 .PHONY: registry build scan-images push
 
 registry:
-> docker inspect -f '{{.State.Running}}' registry 2>/dev/null | grep -q true || (docker rm -f registry 2>/dev/null; docker run -d --restart unless-stopped --name registry -p 127.0.0.1:5000:5000 registry:2.8.3)
+> curl -sf localhost:5000/v2/ >/dev/null || (docker rm -f registry 2>/dev/null; docker run -d --restart unless-stopped --name registry -p 127.0.0.1:5000:5000 registry:2.8.3)
 
 build:
 > TAG=$(TAG) $(COMPOSE) build --pull --no-cache
@@ -111,3 +110,53 @@ normal-load:
 
 det-evidence:
 > bash scripts/detection-evidence.sh
+
+.PHONY: k3d-up k3d-down
+
+k3d-up:
+> @if [ -n "$$(docker ps -q --filter label=com.docker.compose.project=sentinelshop)" ]; then echo "compose is up: run make down first"; exit 1; fi
+> k3d registry list | grep -q k3d-shop-registry || k3d registry create shop-registry --port 127.0.0.1:5000
+> k3d cluster list | grep -q '^shop ' || k3d cluster create shop --servers 1 --agents 2 --registry-use k3d-shop-registry:5000 -p "127.0.0.1:8088:80@loadbalancer" --wait
+> for i in $$(seq 1 60); do kubectl get crd middlewares.traefik.io >/dev/null 2>&1 && break; sleep 3; done
+> kubectl wait --for=condition=Established crd/middlewares.traefik.io --timeout=60s
+> for i in $$(seq 1 60); do kubectl -n kube-system get deploy traefik >/dev/null 2>&1 && break; sleep 3; done
+> kubectl -n kube-system rollout status deploy/traefik --timeout=180s
+
+k3d-down:
+> k3d cluster delete shop
+
+.PHONY: k3d-secret deploy helm-lint
+
+k3d-secret:
+> kubectl create namespace shop --dry-run=client -o yaml | kubectl apply -f -
+> kubectl -n shop get secret shop-secrets >/dev/null 2>&1 || { pw=$$(openssl rand -hex 16); kubectl -n shop create secret generic shop-secrets --from-literal=POSTGRES_PASSWORD=$$pw --from-literal=DATABASE_URL=postgresql://shop:$$pw@postgres:5432/shop --from-literal=SECRET_KEY=$$(openssl rand -hex 32); }
+
+deploy: k3d-secret
+> helm upgrade --install shop helm/shop -n shop $(HELM_VALUES) $(HELM_EXTRA) --wait --wait-for-jobs --timeout 5m
+
+
+.PHONY: k3d-smoke
+
+k3d-smoke:
+> bash scripts/k3d-smoke.sh
+
+.PHONY: netpol-proof
+
+netpol-proof:
+> bash scripts/netpol-proof.sh
+
+HELM := alpine/helm:3.22.1
+STAGE ?= dev
+HELM_VALUES := -f helm/shop/values-$(STAGE).yaml
+ifeq ($(STAGE),prod)
+HELM_VALUES := -f $(GITOPS_DIR)/values-prod.yaml -f helm/shop/values-prod.yaml
+endif
+
+.PHONY: helm-lint k8s-scan
+
+helm-lint:
+> diff -q services/catalog-api/db/init.sql helm/shop/files/init.sql
+> for e in dev prod; do docker run --rm -v "$(CURDIR):/src" -w /src $(HELM) lint helm/shop -f helm/shop/values-$$e.yaml || exit 1; done
+
+k8s-scan:
+> for e in dev prod; do echo "== $$e"; docker run --rm -v "$(CURDIR):/src" -v trivy-cache:/root/.cache/ $(TRIVY) config --severity HIGH,CRITICAL --exit-code 1 --helm-values /src/helm/shop/values-$$e.yaml /src/helm/shop || exit 1; done

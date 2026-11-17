@@ -1,0 +1,17 @@
+bash scripts/netpol-proof.sh
+ok:   order-worker -> postgres:5432 OPEN
+ok:   order-worker -> redis:6379 OPEN
+ok:   seed -> postgres:5432 OPEN
+FAIL: seed -> redis:6379 got 'OPEN', expected BLOCKED
+FAIL: intruder -> postgres:5432 got 'OPEN', expected BLOCKED
+FAIL: intruder -> redis:6379 got 'OPEN', expected BLOCKED
+
+app still works through the ingress:
+ok:   ingress reachable at http://127.0.0.1:8088 and catalog-api ready
+ok:   web page served
+ok:   12 products listed
+ok:   wrong password rejected with 401
+ok:   metrics endpoint is not exposed
+ok:   order 2 placed through the ingress and processed by the worker
+k3d smoke test passed
+make: *** [Makefile:145: netpol-proof] Error 1
