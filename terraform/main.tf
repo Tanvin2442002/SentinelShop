@@ -4,3 +4,8 @@ module "cluster" {
   agents        = var.agents
   registry_port = var.registry_port
 }
+
+module "platform" {
+  source     = "./modules/platform"
+  depends_on = [module.cluster]
+}
