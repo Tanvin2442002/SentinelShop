@@ -1,0 +1,364 @@
+for s in catalog-api order-worker web; do echo "== $s"; docker run --rm -i hadolint/hadolint:v2.15.1 < services/$s/Dockerfile || exit 1; done
+== catalog-api
+== order-worker
+== web
+docker run --rm -v "/home/mist/Documents/Projects/sentinelShop:/src" -v trivy-cache:/root/.cache/ aquasec/trivy:0.76.2 config --ignorefile /src/.trivyignore.yaml --severity HIGH,CRITICAL --exit-code 1 /src
+2026-11-17T14:49:03Z	INFO	[misconfig] Misconfiguration scanning is enabled
+2026-11-17T14:49:03Z	INFO	[checks-client] Using existing checks from cache	path="/root/.cache/trivy/policy/content"
+2026-11-17T14:49:05Z	INFO	[terraform scanner] Scanning root module	file_path="terraform"
+2026-11-17T14:49:05Z	INFO	Detected config files	num=22
+
+Report Summary
+
+┌─────────────────────────────────────────────┬────────────┬───────────────────┐
+│                   Target                    │    Type    │ Misconfigurations │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ ansible/target.Dockerfile                   │ dockerfile │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ ci/jenkins/Dockerfile                       │ dockerfile │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ detection/attacker/Dockerfile               │ dockerfile │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ detection/responder/Dockerfile              │ dockerfile │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/catalog-api.yaml        │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/configmap.yaml          │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/ingress-api.yaml        │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/ingress-middleware.yaml │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/ingress-web.yaml        │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/np-baseline.yaml        │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/np-data-egress.yaml     │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/np-data-ingress.yaml    │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/np-edge.yaml            │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/order-worker.yaml       │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/postgres.yaml           │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/redis.yaml              │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/seed.yaml               │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ helm/shop/templates/web.yaml                │    helm    │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ services/catalog-api/Dockerfile             │ dockerfile │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ services/order-worker/Dockerfile            │ dockerfile │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ services/web/Dockerfile                     │ dockerfile │         0         │
+├─────────────────────────────────────────────┼────────────┼───────────────────┤
+│ terraform                                   │ terraform  │         0         │
+└─────────────────────────────────────────────┴────────────┴───────────────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+diff -q services/catalog-api/db/init.sql helm/shop/files/init.sql
+for e in dev prod; do docker run --rm -v "/home/mist/Documents/Projects/sentinelShop:/src" -w /src alpine/helm:3.22.1 lint helm/shop -f helm/shop/values-$e.yaml || exit 1; done
+==> Linting helm/shop
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+==> Linting helm/shop
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+for e in dev prod; do echo "== $e"; docker run --rm -v "/home/mist/Documents/Projects/sentinelShop:/src" -v trivy-cache:/root/.cache/ aquasec/trivy:0.76.2 config --severity HIGH,CRITICAL --exit-code 1 --helm-values /src/helm/shop/values-$e.yaml /src/helm/shop || exit 1; done
+== dev
+2026-11-17T14:49:07Z	INFO	[misconfig] Misconfiguration scanning is enabled
+2026-11-17T14:49:07Z	INFO	[checks-client] Using existing checks from cache	path="/root/.cache/trivy/policy/content"
+2026-11-17T14:49:08Z	INFO	Detected config files	num=14
+
+Report Summary
+
+┌───────────────────────────────────┬──────┬───────────────────┐
+│              Target               │ Type │ Misconfigurations │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/catalog-api.yaml        │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/configmap.yaml          │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/ingress-api.yaml        │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/ingress-middleware.yaml │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/ingress-web.yaml        │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/np-baseline.yaml        │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/np-data-egress.yaml     │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/np-data-ingress.yaml    │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/np-edge.yaml            │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/order-worker.yaml       │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/postgres.yaml           │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/redis.yaml              │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/seed.yaml               │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/web.yaml                │ helm │         0         │
+└───────────────────────────────────┴──────┴───────────────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+== prod
+2026-11-17T14:49:09Z	INFO	[misconfig] Misconfiguration scanning is enabled
+2026-11-17T14:49:09Z	INFO	[checks-client] Using existing checks from cache	path="/root/.cache/trivy/policy/content"
+2026-11-17T14:49:10Z	INFO	Detected config files	num=14
+
+Report Summary
+
+┌───────────────────────────────────┬──────┬───────────────────┐
+│              Target               │ Type │ Misconfigurations │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/catalog-api.yaml        │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/configmap.yaml          │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/ingress-api.yaml        │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/ingress-middleware.yaml │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/ingress-web.yaml        │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/np-baseline.yaml        │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/np-data-egress.yaml     │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/np-data-ingress.yaml    │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/np-edge.yaml            │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/order-worker.yaml       │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/postgres.yaml           │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/redis.yaml              │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/seed.yaml               │ helm │         0         │
+├───────────────────────────────────┼──────┼───────────────────┤
+│ templates/web.yaml                │ helm │         0         │
+└───────────────────────────────────┴──────┴───────────────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+for s in catalog-api order-worker web; do echo "== $s:7c2cfe4"; \
+   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache/ aquasec/trivy:0.76.2 image --severity HIGH --ignore-unfixed --exit-code 0 --quiet localhost:5000/$s:7c2cfe4; \
+   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache/ aquasec/trivy:0.76.2 image --severity CRITICAL --ignore-unfixed --exit-code 1 --quiet localhost:5000/$s:7c2cfe4 || exit 1; \
+ done
+== catalog-api:7c2cfe4
+
+Report Summary
+
+┌──────────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┬─────────┐
+│                                      Target                                      │    Type    │ Vulnerabilities │ Secrets │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ localhost:5000/catalog-api:7c2cfe4 (alpine 3.24.4)                               │   alpine   │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/annotated_doc-0.0.6.dist-info/METADATA     │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/annotated_types-0.8.0.dist-info/METADATA   │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/anyio-4.16.0.dist-info/METADATA            │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/click-8.5.1.dist-info/METADATA             │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/fastapi-0.163.1.dist-info/METADATA         │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/h11-0.16.0.dist-info/METADATA              │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/idna-3.20.dist-info/METADATA               │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/opentelemetry_api-1.45.2.dist-info/METADA- │ python-pkg │        0        │    -    │
+│ TA                                                                               │            │                 │         │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA              │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/prometheus_client-0.26.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+│ TA                                                                               │            │                 │         │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/psycopg-3.3.9.dist-info/METADATA           │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/psycopg_binary-3.3.9.dist-info/METADATA    │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/psycopg_pool-3.3.3.dist-info/METADATA      │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/pydantic-2.14.3.dist-info/METADATA         │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/pydantic_core-2.50.4.dist-info/METADATA    │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/redis-8.1.0.dist-info/METADATA             │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/starlette-1.10.0.dist-info/METADATA        │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/typing_extensions-4.16.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+│ TA                                                                               │            │                 │         │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/typing_inspection-0.4.5.dist-info/METADATA │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/uvicorn-0.54.0.dist-info/METADATA          │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA             │ python-pkg │        0        │    -    │
+└──────────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┴─────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+
+Report Summary
+
+┌──────────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┬─────────┐
+│                                      Target                                      │    Type    │ Vulnerabilities │ Secrets │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ localhost:5000/catalog-api:7c2cfe4 (alpine 3.24.4)                               │   alpine   │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/annotated_doc-0.0.6.dist-info/METADATA     │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/annotated_types-0.8.0.dist-info/METADATA   │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/anyio-4.16.0.dist-info/METADATA            │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/click-8.5.1.dist-info/METADATA             │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/fastapi-0.163.1.dist-info/METADATA         │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/h11-0.16.0.dist-info/METADATA              │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/idna-3.20.dist-info/METADATA               │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/opentelemetry_api-1.45.2.dist-info/METADA- │ python-pkg │        0        │    -    │
+│ TA                                                                               │            │                 │         │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA              │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/prometheus_client-0.26.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+│ TA                                                                               │            │                 │         │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/psycopg-3.3.9.dist-info/METADATA           │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/psycopg_binary-3.3.9.dist-info/METADATA    │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/psycopg_pool-3.3.3.dist-info/METADATA      │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/pydantic-2.14.3.dist-info/METADATA         │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/pydantic_core-2.50.4.dist-info/METADATA    │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/redis-8.1.0.dist-info/METADATA             │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/starlette-1.10.0.dist-info/METADATA        │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/typing_extensions-4.16.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+│ TA                                                                               │            │                 │         │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/typing_inspection-0.4.5.dist-info/METADATA │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/uvicorn-0.54.0.dist-info/METADATA          │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA             │ python-pkg │        0        │    -    │
+└──────────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┴─────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+== order-worker:7c2cfe4
+
+Report Summary
+
+┌──────────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┬─────────┐
+│                                      Target                                      │    Type    │ Vulnerabilities │ Secrets │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ localhost:5000/order-worker:7c2cfe4 (alpine 3.24.4)                              │   alpine   │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA              │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/prometheus_client-0.26.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+│ TA                                                                               │            │                 │         │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/psycopg-3.3.9.dist-info/METADATA           │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/psycopg_binary-3.3.9.dist-info/METADATA    │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/psycopg_pool-3.3.3.dist-info/METADATA      │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/redis-8.1.0.dist-info/METADATA             │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/typing_extensions-4.16.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+│ TA                                                                               │            │                 │         │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA             │ python-pkg │        0        │    -    │
+└──────────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┴─────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+
+Report Summary
+
+┌──────────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┬─────────┐
+│                                      Target                                      │    Type    │ Vulnerabilities │ Secrets │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ localhost:5000/order-worker:7c2cfe4 (alpine 3.24.4)                              │   alpine   │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA              │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/prometheus_client-0.26.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+│ TA                                                                               │            │                 │         │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/psycopg-3.3.9.dist-info/METADATA           │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/psycopg_binary-3.3.9.dist-info/METADATA    │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/psycopg_pool-3.3.3.dist-info/METADATA      │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/redis-8.1.0.dist-info/METADATA             │ python-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ opt/venv/lib/python3.12/site-packages/typing_extensions-4.16.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+│ TA                                                                               │            │                 │         │
+├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+│ usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA             │ python-pkg │        0        │    -    │
+└──────────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┴─────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+== web:7c2cfe4
+
+Report Summary
+
+┌────────────────────────────────────────────┬────────┬─────────────────┬─────────┐
+│                   Target                   │  Type  │ Vulnerabilities │ Secrets │
+├────────────────────────────────────────────┼────────┼─────────────────┼─────────┤
+│ localhost:5000/web:7c2cfe4 (alpine 3.24.2) │ alpine │        0        │    -    │
+└────────────────────────────────────────────┴────────┴─────────────────┴─────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+
+Report Summary
+
+┌────────────────────────────────────────────┬────────┬─────────────────┬─────────┐
+│                   Target                   │  Type  │ Vulnerabilities │ Secrets │
+├────────────────────────────────────────────┼────────┼─────────────────┼─────────┤
+│ localhost:5000/web:7c2cfe4 (alpine 3.24.2) │ alpine │        0        │    -    │
+└────────────────────────────────────────────┴────────┴─────────────────┴─────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+exit=0
