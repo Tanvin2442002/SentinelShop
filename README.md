@@ -51,10 +51,10 @@ Needs: Docker Engine with Compose v2, make, git, openssl. Optional: pre-commit.
 ## Task 2: delivery pipeline
 
 - The `Jenkinsfile` has no logic of its own. Every stage calls a make target, so CI and a laptop run the same commands.
-- Stages: info, secrets (gitleaks), parallel static checks (Dockerfile lint, SAST with semgrep, config scan with Trivy, Helm lint, Kubernetes scan), build, image scan, push, gitops.
+- Stages: info, secrets (gitleaks), parallel static checks (Dockerfile lint, SAST with semgrep, config scan with Trivy, Helm lint, Kubernetes scan, the pytest suite), build, image scan, push, gitops.
 - A failing static check marks that stage and the build red but lets the run carry on, so one run reports every problem. The build stage stops the run immediately if it fails.
 - Images are tagged with the short git SHA and pushed to the local registry on `localhost:5000`, but only when the whole run is green.
-- The last stage writes the new tag into `values-prod.yaml` in a separate gitops repo (`GITOPS_DIR`) and commits it. The pipeline never runs `kubectl`. Deployment is a separate, manual `make deploy STAGE=prod`.
+- The last stage writes the new tag into `values-prod.yaml` in a local gitops repo (`GITOPS_DIR`, created by `make jenkins-up` inside the Jenkins home) and commits it. The pipeline never runs `kubectl`. Deployment is a separate, manual `make deploy STAGE=prod`.
 - It skips branches starting with `demo/`, so the demo branches can never publish a tag.
 - A pre-commit hook runs gitleaks and blocks a commit that contains a secret. `make secrets` scans the history of the current branch.
 - The branch `demo/insecure` carries three planted fake flaws and is never merged. Its pipeline run must fail.
@@ -64,13 +64,13 @@ Needs: Docker Engine with Compose v2, make, git, openssl. Optional: pre-commit.
 ## Task 3: Kubernetes
 
 - A k3d cluster `shop` (one server, two agents) with a local registry and Traefik as ingress, reachable on port 8088.
-- `make k3d-up`, `make k3d-secret`, `make deploy` and `make k3d-smoke` create the cluster, create the secret, install the Helm chart and test it.
+- `make k3d-up`, `make k3d-secret`, `make deploy` and `make k3d-smoke` create the cluster, create the secret, install the Helm chart and test it. `make deploy` also builds and pushes the app images and mirrors Postgres and Redis into the cluster registry, so it works on a clean machine.
 - The chart in `helm/shop/` runs Postgres and Redis as StatefulSets and the API, worker and web as deployments, with a disruption budget and topology spread. The worker count is set by an autoscaler.
 - Secrets are created by make, not stored in the chart. A config checksum on the pods rolls them when configuration changes.
 - A seed job loads the products once. Its name contains the hash of the SQL file, so it runs again only when the data changes.
 - Network policies start from default-deny for ingress and egress, then allow DNS, ingress to web and API, and each datastore only from the apps that need it. `make netpol-proof` shows the before and after with throwaway pods.
 - Compose and the cluster never run at the same time. The make targets check for this.
-- `STAGE=dev` or `STAGE=prod` picks the values file. For prod, the image tag comes from the gitops repo.
+- `STAGE=dev` or `STAGE=prod` picks the values file. For prod, the image tag comes from the gitops repo (`GITOPS_DIR`, for example `make deploy STAGE=prod GITOPS_DIR=$HOME/jenkins_home/gitops-repo`); the default is the snapshot in `gitops/`.
 
 ## Task 4: Terraform and Ansible
 
@@ -148,6 +148,9 @@ The path of one request: the edge writes a JSON access log, Wazuh reads it and a
 - `make secrets` scans the history of the current branch only. The branch `demo/insecure` holds its planted fake secret on purpose.
 - The gitops repo is a local git repo that `make jenkins-up` creates inside Jenkins' home from the snapshot in `gitops/`. The pipeline commits the image tag there. It is not on GitHub, and `gitops/` in this repo is only the starting copy.
 - The container-based Ansible target has the limits listed under Task 4.
+- Detection rules read only the edge access log. Brute force is seen from the 401 responses at the edge, not from the API's own login-failed lines, so an attack that bypasses the edge would not be seen.
+- `runbook_url` in the alerts is a path to a file in this repo, not a clickable link, because the repo has no fixed public address inside the alert tools.
+- `make jenkins-up` expects your user id to be 1000, the user id inside the Jenkins container. With another id, change the owner of the Jenkins home folder first.
 
 ## What was cut and why
 
@@ -168,7 +171,9 @@ Done and not cut: graceful degradation when Redis is down (the API returns 503 a
 | Target | What it does |
 |---|---|
 | `make up`, `make smoke`, `make down`, `make clean` | start, test, stop, wipe the stack |
-| `make ci` | all static checks the pipeline runs |
+| `make ci` | all checks the pipeline runs, including the tests |
+| `make test` | the pytest suite, run in a container |
+| `make jenkins-up` | build and start Jenkins on port 8081 |
 | `make mon-up`, `make normal-load` | monitoring stack and steady traffic |
 | `make det-up`, `make attack ATTACK=...`, `make det-evidence` | detection and response |
 | `make k3d-up`, `make k3d-secret`, `make deploy`, `make k3d-smoke`, `make netpol-proof` | Kubernetes |
