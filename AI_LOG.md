@@ -29,3 +29,8 @@ Asked for a better-looking shop page with product cards, an orders panel, a logi
 ## 6. Chaos fault flags
 
 Asked for four fault flags (latency, error rate, slow database writes, memory leak) read only from a runtime file (`ed33257`, `1408f6c`). My first prompt also asked for a startup log line listing the active flags. That would have shown the fault in the logs and spoiled the blind drill, so I removed that request before it was built.
+
+
+## 7. Detection rules, the integration and manual unblock
+
+The first Wazuh rules did not work. Wazuh rejected a rule that matched the static `status` field and needed the `<status>` tag. The counting rules did not fire because the level 0 base rules are not counted, and `frequency` fires on the Nth event, so the brute-force rule fired at event 8 with frequency 8. I found each of these with `wazuh-logtest` and a replay of the log lines, and fixed them one by one. The first live run raised the alert but nothing was blocked. `ossec.log` said Wazuh could not execute the integration script, because the script was not executable by the user the integration runs as. I changed its mode to 755 and the next run blocked the attacker. Later I saw that unblocking by editing the blocklist file would be undone by the responder's memory, and restarting it would wipe the audit log, so I added a `POST /unblock` endpoint (`bf91ccf`). I checked all of it with `evidence/detection/attacks-summary.txt` (each attack gives one alert, attacker 403, normal client 200), `dedup-window.txt` (a repeat inside 300 seconds gives no second alert) and the false-positive file (zero alerts for 6001 normal requests).
