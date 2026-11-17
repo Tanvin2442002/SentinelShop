@@ -133,3 +133,13 @@ deploy: k3d-secret
 helm-lint:
 > helm lint helm/shop
 > diff -q services/catalog-api/db/init.sql helm/shop/files/init.sql
+
+.PHONY: k3d-smoke
+
+k3d-smoke:
+> bash scripts/k3d-smoke.sh
+
+.PHONY: netpol-proof
+
+netpol-proof:
+> bash scripts/netpol-proof.sh
