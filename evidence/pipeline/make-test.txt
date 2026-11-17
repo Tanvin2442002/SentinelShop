@@ -1,0 +1,8 @@
+docker run --rm -e PYTHONDONTWRITEBYTECODE=1 -v "/home/mist/Documents/Projects/sentinelShop:/src:ro" -w /src python:3.12-alpine sh -c "pip install -q --no-cache-dir -r services/catalog-api/requirements-dev.txt -r services/order-worker/requirements.txt && python -m pytest -q -p no:cacheprovider"
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+........................................................................ [ 68%]
+.................................                                        [100%]
+105 passed in 6.37s

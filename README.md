@@ -59,7 +59,7 @@ Needs: Docker Engine with Compose v2, make, git, openssl. Optional: pre-commit.
 - A pre-commit hook runs gitleaks and blocks a commit that contains a secret. `make secrets` scans the history of the current branch.
 - The branch `demo/insecure` carries three planted fake flaws and is never merged. Its pipeline run must fail.
 - One accepted finding: the Ansible test container runs as root on purpose (systemd needs it). It is listed in `.trivyignore.yaml` with the reason.
-- Jenkins runs in Docker on port 8081. `make ci` runs the same checks locally.
+- Jenkins runs in Docker on port 8081; start it with `make jenkins-up`. `make ci` runs the same checks locally.
 
 ## Task 3: Kubernetes
 
@@ -78,7 +78,7 @@ Terraform (`terraform/`, modules `cluster` and `platform`):
 - The `cluster` module creates a k3d cluster `shop-tf` and its registry (port 5001, so it never clashes with Task 3). With no cloud, it wraps the k3d command in `terraform_data`. Changing the cluster name or the number of agents makes Terraform replace the cluster.
 - The `platform` module uses the Kubernetes provider to create the `shop` namespace, a resource quota, default limits and a default-deny network policy.
 - State is local and git-ignored. The provider version is pinned and the lock file is committed.
-- `make tf-validate` (format check and validate), `tf-plan`, `tf-apply` and `tf-destroy`. Apply, destroy and apply again works from a clean start.
+- `make tf-validate` (format check and validate), `tf-plan`, `tf-apply` and `tf-destroy`. `tf-apply` runs in two stages: the cluster module first, then everything, because the Kubernetes provider needs the cluster's context before it can plan. Proof from a clean start, including a second plan with no changes: `evidence/terraform/clean-start-apply.txt`.
 
 Ansible (`ansible/`, roles `hardening` and `backup`):
 - The target is a privileged Ubuntu 24.04 container running systemd, because this VM has no way to run a second machine. Ansible reaches it through `docker exec`, not SSH.

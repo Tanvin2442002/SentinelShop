@@ -1,0 +1,226 @@
+]633;E;make tf-apply;0976d637-81cb-463e-a6a3-9e2fec674648]633;Ccd terraform && terraform init -input=false >/dev/null && terraform apply -auto-approve -no-color -target=module.cluster
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.cluster.terraform_data.cluster will be created
+  + resource "terraform_data" "cluster" {
+      + id               = (known after apply)
+      + input            = {
+          + cluster  = "shop-tf"
+          + registry = "k3d-shop-tf-registry"
+        }
+      + output           = (known after apply)
+      + triggers_replace = [
+          + "shop-tf",
+          + 2,
+        ]
+    }
+
+  # module.cluster.terraform_data.registry will be created
+  + resource "terraform_data" "registry" {
+      + id     = (known after apply)
+      + input  = "shop-tf-registry"
+      + output = (known after apply)
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+module.cluster.terraform_data.registry: Creating...
+module.cluster.terraform_data.registry: Provisioning with 'local-exec'...
+module.cluster.terraform_data.registry (local-exec): Executing: ["/bin/sh" "-c" "k3d registry create shop-tf-registry --port 127.0.0.1:5001"]
+module.cluster.terraform_data.registry (local-exec): [36mINFO[0m[0000] Creating node 'k3d-shop-tf-registry'
+module.cluster.terraform_data.registry (local-exec): [36mINFO[0m[0000] Successfully created registry 'k3d-shop-tf-registry'
+module.cluster.terraform_data.registry (local-exec): [36mINFO[0m[0000] Starting node 'k3d-shop-tf-registry'
+module.cluster.terraform_data.registry (local-exec): [36mINFO[0m[0000] Successfully created registry 'k3d-shop-tf-registry'
+module.cluster.terraform_data.registry (local-exec): # You can now use the registry like this (example):
+module.cluster.terraform_data.registry (local-exec): # 1. create a new cluster that uses this registry
+module.cluster.terraform_data.registry (local-exec): k3d cluster create --registry-use k3d-shop-tf-registry:5001
+
+module.cluster.terraform_data.registry (local-exec): # 2. tag an existing local image to be pushed to the registry
+module.cluster.terraform_data.registry (local-exec): docker tag nginx:latest k3d-shop-tf-registry:5001/mynginx:v0.1
+
+module.cluster.terraform_data.registry (local-exec): # 3. push that image to the registry
+module.cluster.terraform_data.registry (local-exec): docker push k3d-shop-tf-registry:5001/mynginx:v0.1
+
+module.cluster.terraform_data.registry (local-exec): # 4. run a pod that uses this image
+module.cluster.terraform_data.registry (local-exec): kubectl run mynginx --image k3d-shop-tf-registry:5001/mynginx:v0.1
+
+module.cluster.terraform_data.registry: Creation complete after 1s [id=c1afdf8d-cc06-f8a0-e4c7-8689d6f3addf]
+module.cluster.terraform_data.cluster: Creating...
+module.cluster.terraform_data.cluster: Provisioning with 'local-exec'...
+module.cluster.terraform_data.cluster (local-exec): Executing: ["/bin/sh" "-c" "k3d cluster create shop-tf --servers 1 --agents 2 --registry-use k3d-shop-tf-registry:5001 --kubeconfig-switch-context=false --wait"]
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0000] Prep: Network
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0000] Created network 'k3d-shop-tf'
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0000] Created image volume k3d-shop-tf-images
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0000] Starting new tools node...
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0000] Starting node 'k3d-shop-tf-tools'
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0001] Creating node 'k3d-shop-tf-server-0'
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0001] Creating node 'k3d-shop-tf-agent-0'
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0001] Creating node 'k3d-shop-tf-agent-1'
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0001] Creating LoadBalancer 'k3d-shop-tf-serverlb'
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0001] Using the k3d-tools node to gather environment information
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0001] HostIP: using network gateway 172.19.0.1 address
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0001] Starting cluster 'shop-tf'
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0001] Starting servers...
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0001] Starting node 'k3d-shop-tf-server-0'
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0007] Starting agents...
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0007] Starting node 'k3d-shop-tf-agent-1'
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0007] Starting node 'k3d-shop-tf-agent-0'
+module.cluster.terraform_data.cluster: Still creating... [00m10s elapsed]
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0011] Starting helpers...
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0011] Starting node 'k3d-shop-tf-serverlb'
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0017] Injecting records for hostAliases (incl. host.k3d.internal) and for 5 network members into CoreDNS configmap...
+module.cluster.terraform_data.cluster: Still creating... [00m20s elapsed]
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0020] Cluster 'shop-tf' created successfully!
+module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0020] You can now use it like this:
+module.cluster.terraform_data.cluster (local-exec): kubectl config use-context k3d-shop-tf
+module.cluster.terraform_data.cluster (local-exec): kubectl cluster-info
+module.cluster.terraform_data.cluster: Creation complete after 20s [id=269c84ad-58ce-eadd-a37c-ec0a2bbe2813]
+
+Warning: Resource targeting is in effect
+
+You are creating a plan with the -target option, which means that the result
+of this plan may not represent all of the changes requested by the current
+configuration.
+
+The -target option is not for routine use, and is provided only for
+exceptional situations such as recovering from errors or mistakes, or when
+Terraform specifically suggests to use it as part of an error message.
+
+Warning: Applied changes may be incomplete
+
+The plan was created with the -target option in effect, so some changes
+requested in the configuration may have been ignored and the output values
+may not be fully updated. Run the following command to verify that no other
+changes are pending:
+    terraform plan
+
+Note that the -target option is not suitable for routine use, and is provided
+only for exceptional situations such as recovering from errors or mistakes,
+or when Terraform specifically suggests to use it as part of an error
+message.
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+cd terraform && terraform apply -auto-approve -no-color
+module.cluster.terraform_data.registry: Refreshing state... [id=c1afdf8d-cc06-f8a0-e4c7-8689d6f3addf]
+module.cluster.terraform_data.cluster: Refreshing state... [id=269c84ad-58ce-eadd-a37c-ec0a2bbe2813]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.platform.kubernetes_limit_range_v1.shop will be created
+  + resource "kubernetes_limit_range_v1" "shop" {
+      + id = (known after apply)
+
+      + metadata {
+          + generation       = (known after apply)
+          + name             = "shop-limits"
+          + namespace        = "shop"
+          + resource_version = (known after apply)
+          + uid              = (known after apply)
+        }
+
+      + spec {
+          + limit {
+              + default         = {
+                  + "cpu"    = "500m"
+                  + "memory" = "512Mi"
+                }
+              + default_request = {
+                  + "cpu"    = "100m"
+                  + "memory" = "128Mi"
+                }
+              + type            = "Container"
+            }
+        }
+    }
+
+  # module.platform.kubernetes_namespace_v1.shop will be created
+  + resource "kubernetes_namespace_v1" "shop" {
+      + id                               = (known after apply)
+      + wait_for_default_service_account = false
+
+      + metadata {
+          + generation       = (known after apply)
+          + name             = "shop"
+          + resource_version = (known after apply)
+          + uid              = (known after apply)
+        }
+    }
+
+  # module.platform.kubernetes_network_policy_v1.default_deny will be created
+  + resource "kubernetes_network_policy_v1" "default_deny" {
+      + id = (known after apply)
+
+      + metadata {
+          + generation       = (known after apply)
+          + name             = "default-deny"
+          + namespace        = "shop"
+          + resource_version = (known after apply)
+          + uid              = (known after apply)
+        }
+
+      + spec {
+          + policy_types = [
+              + "Ingress",
+              + "Egress",
+            ]
+
+          + pod_selector {
+            }
+        }
+    }
+
+  # module.platform.kubernetes_resource_quota_v1.shop will be created
+  + resource "kubernetes_resource_quota_v1" "shop" {
+      + id = (known after apply)
+
+      + metadata {
+          + generation       = (known after apply)
+          + name             = "shop-quota"
+          + namespace        = "shop"
+          + resource_version = (known after apply)
+          + uid              = (known after apply)
+        }
+
+      + spec {
+          + hard = {
+              + "limits.cpu"      = "8"
+              + "limits.memory"   = "12Gi"
+              + "pods"            = "40"
+              + "requests.cpu"    = "4"
+              + "requests.memory" = "6Gi"
+            }
+        }
+    }
+
+Plan: 4 to add, 0 to change, 0 to destroy.
+module.platform.kubernetes_namespace_v1.shop: Creating...
+module.platform.kubernetes_namespace_v1.shop: Creation complete after 0s [id=shop]
+module.platform.kubernetes_limit_range_v1.shop: Creating...
+module.platform.kubernetes_network_policy_v1.default_deny: Creating...
+module.platform.kubernetes_resource_quota_v1.shop: Creating...
+module.platform.kubernetes_limit_range_v1.shop: Creation complete after 0s [id=shop/shop-limits]
+module.platform.kubernetes_network_policy_v1.default_deny: Creation complete after 0s [id=shop/default-deny]
+module.platform.kubernetes_resource_quota_v1.shop: Creation complete after 1s [id=shop/shop-quota]
+
+Apply complete! Resources: 4 added, 0 changed, 0 destroyed.
+--- second plan, must show no changes
+module.cluster.terraform_data.registry: Refreshing state... [id=c1afdf8d-cc06-f8a0-e4c7-8689d6f3addf]
+module.cluster.terraform_data.cluster: Refreshing state... [id=269c84ad-58ce-eadd-a37c-ec0a2bbe2813]
+module.platform.kubernetes_namespace_v1.shop: Refreshing state... [id=shop]
+module.platform.kubernetes_network_policy_v1.default_deny: Refreshing state... [id=shop/default-deny]
+module.platform.kubernetes_resource_quota_v1.shop: Refreshing state... [id=shop/shop-quota]
+module.platform.kubernetes_limit_range_v1.shop: Refreshing state... [id=shop/shop-limits]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
+plan exit=0

@@ -56,7 +56,11 @@ sast:
 scan-config:
 > docker run --rm -v "$(CURDIR):/src" -v trivy-cache:/root/.cache/ $(TRIVY) config --ignorefile /src/.trivyignore.yaml --severity HIGH,CRITICAL --exit-code 1 /src
 
-ci: secrets lint sast scan-config helm-lint k8s-scan
+.PHONY: test
+test:
+> docker run --rm -e PYTHONDONTWRITEBYTECODE=1 -v "$(CURDIR):/src:ro" -w /src python:3.12-alpine sh -c "pip install -q --no-cache-dir -r services/catalog-api/requirements-dev.txt -r services/order-worker/requirements.txt && python -m pytest -q -p no:cacheprovider"
+
+ci: secrets lint test sast scan-config helm-lint k8s-scan
 
 REGISTRY ?= localhost:5000
 TAG      ?= $(shell git rev-parse --short HEAD)
@@ -131,9 +135,14 @@ k3d-secret:
 > kubectl create namespace shop --dry-run=client -o yaml | kubectl apply -f -
 > kubectl -n shop get secret shop-secrets >/dev/null 2>&1 || { pw=$$(openssl rand -hex 16); kubectl -n shop create secret generic shop-secrets --from-literal=POSTGRES_PASSWORD=$$pw --from-literal=DATABASE_URL=postgresql://shop:$$pw@postgres:5432/shop --from-literal=SECRET_KEY=$$(openssl rand -hex 32); }
 
-deploy: k3d-secret
+deploy: k3d-secret k3d-images
 > helm upgrade --install shop helm/shop -n shop $(HELM_VALUES) $(HELM_EXTRA) --wait --wait-for-jobs --timeout 5m
 
+.PHONY: k3d-images
+k3d-images: env
+> TAG=dev $(COMPOSE) build
+> for s in $(SERVICES); do docker push $(REGISTRY)/$$s:dev || exit 1; done
+> for i in postgres:16.16-alpine redis:7.4.11-alpine; do docker pull $$i && docker tag $$i $(REGISTRY)/$$i && docker push $(REGISTRY)/$$i || exit 1; done
 
 .PHONY: k3d-smoke
 
@@ -185,6 +194,7 @@ tf-validate:
 tf-plan:
 > cd terraform && terraform init -input=false >/dev/null && terraform plan -no-color
 tf-apply:
+> cd terraform && terraform init -input=false >/dev/null && terraform apply -auto-approve -no-color -target=module.cluster
 > cd terraform && terraform apply -auto-approve -no-color
 tf-destroy:
 > cd terraform && terraform destroy -auto-approve -no-color
@@ -192,6 +202,7 @@ tf-destroy:
 export SHOP_DB_PASSWORD ?= testpass
 .PHONY: target-up target-down ansible-run ansible-check ansible-idempotence
 target-up: target-down
+> mkdir -p $(HOME)/.ssh && test -f $(HOME)/.ssh/shop_deploy.pub || ssh-keygen -q -t ed25519 -f $(HOME)/.ssh/shop_deploy -N ''
 > docker build -q -t shop-target -f ansible/target.Dockerfile ansible >/dev/null
 > docker run -d --name shop-target --privileged --cgroupns=host --tmpfs /run --tmpfs /run/lock -v /sys/fs/cgroup:/sys/fs/cgroup:rw -p 127.0.0.1:2222:22 shop-target >/dev/null
 > docker network create shop-bk >/dev/null
@@ -207,3 +218,13 @@ ansible-check:
 > cd ansible && ansible-playbook site.yml --syntax-check
 ansible-idempotence:
 > @cd ansible && out=$$(ANSIBLE_NOCOLOR=1 ansible-playbook site.yml 2>&1); echo "$$out" | tail -3; echo "$$out" | grep -q "changed=0 " || { echo "not idempotent"; exit 1; }
+
+JENKINS_HOME   ?= $(HOME)/jenkins_home
+JENKINS_GITOPS ?= $(HOME)/Documents/Projects/sentinelShop-gitops
+
+.PHONY: jenkins-up
+jenkins-up:
+> docker build -q -t sentinelshop-jenkins:2.580.2 ci/jenkins >/dev/null
+> mkdir -p $(JENKINS_HOME) $(JENKINS_GITOPS)
+> docker rm -f jenkins >/dev/null 2>&1 || true
+> docker run -d --name jenkins --restart unless-stopped -p 127.0.0.1:8081:8080 -e JENKINS_HOME=$(JENKINS_HOME) -v $(JENKINS_HOME):$(JENKINS_HOME) -v $(JENKINS_GITOPS):$(JENKINS_GITOPS) -v /var/run/docker.sock:/var/run/docker.sock --group-add $$(stat -c %g /var/run/docker.sock) sentinelshop-jenkins:2.580.2

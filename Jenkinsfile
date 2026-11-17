@@ -39,6 +39,7 @@ pipeline {
                 stage('Config scan')     { steps { script { softCheck('config-scan', 'scan-config') } } }
                 stage('Helm lint')       { steps { script { softCheck('helm-lint', 'helm-lint') } } }
                 stage('K8s scan')        { steps { script { softCheck('k8s-scan', 'k8s-scan') } } }
+                stage('Tests')           { steps { script { softCheck('test', 'test') } } }
             }
         }
         stage('Prepare') { steps { sh 'make env' } }
