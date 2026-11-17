@@ -132,3 +132,4 @@ deploy: k3d-secret
 
 helm-lint:
 > helm lint helm/shop
+> diff -q services/catalog-api/db/init.sql helm/shop/files/init.sql
