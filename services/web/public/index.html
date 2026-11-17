@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <title>SentinelShop</title>
   <!-- No inline script or style, so the edge can send a strict
        Content-Security-Policy (script-src 'self'; style-src 'self'). -->
@@ -10,50 +11,114 @@
   <script src="app.js" defer></script>
 </head>
 <body>
-  <header>
-    <h1>SentinelShop</h1>
-    <p class="muted">Lab demo shop. Every API reply shows its trace id, so you can find it in Grafana.</p>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#shop" aria-label="SentinelShop home">
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5l-8-3Z"/>
+          <path class="brand-check" d="m8.5 12 2.5 2.5 4.5-5"/>
+        </svg>
+        <span>Sentinel<strong>Shop</strong></span>
+      </a>
+
+      <form id="search-form" class="search" role="search">
+        <label for="search-q" class="visually-hidden">Search products</label>
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="search-q" name="q" type="search" maxlength="100" placeholder="Search products" autocomplete="off">
+      </form>
+
+      <div class="account">
+        <a id="signin-link" class="btn btn-ghost" href="#login">Sign in</a>
+        <div id="user-chip" class="user-chip" hidden>
+          <span id="user-avatar" class="avatar" aria-hidden="true"></span>
+          <span id="user-name" class="user-name"></span>
+          <button id="signout" class="btn btn-ghost btn-small" type="button">Sign out</button>
+        </div>
+      </div>
+    </div>
   </header>
 
-  <main>
-    <section aria-labelledby="products-title">
-      <h2 id="products-title">Products</h2>
-      <form id="search-form" class="row">
-        <label for="search-q">Search by name</label>
-        <input id="search-q" name="q" type="search" maxlength="100" placeholder="e.g. mouse">
-        <button type="submit">Search</button>
-        <button type="button" id="search-clear">Show all</button>
-      </form>
-      <p id="products-status" class="status" role="status"></p>
-      <table>
-        <thead>
-          <tr><th>ID</th><th>Name</th><th>Price</th><th>Stock</th><th>Quantity</th><th></th></tr>
-        </thead>
-        <tbody id="products-body"></tbody>
-      </table>
+  <!-- Shop view -->
+  <main id="view-shop" class="view">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Desk &amp; tech essentials</p>
+        <h1>Gear that keeps your workspace running.</h1>
+        <p class="hero-sub">Order in a click and follow it live from the queue to your door.</p>
+      </div>
     </section>
 
-    <section aria-labelledby="orders-title">
-      <h2 id="orders-title">Orders</h2>
-      <p id="order-status" class="status" role="status">Place an order from the table above.</p>
-      <form id="order-lookup" class="row">
-        <label for="order-id">Check order by id</label>
-        <input id="order-id" name="id" type="number" min="1" step="1" required>
-        <button type="submit">Check</button>
-      </form>
-    </section>
+    <div class="layout">
+      <section class="catalog" aria-labelledby="products-title">
+        <div class="section-head">
+          <h2 id="products-title">Products</h2>
+          <div class="section-tools">
+            <p id="products-status" class="muted" role="status"></p>
+            <button id="search-clear" class="btn btn-ghost btn-small" type="button" hidden>Clear search</button>
+          </div>
+        </div>
+        <div id="products-grid" class="grid"></div>
+        <div id="products-empty" class="empty" hidden>
+          <p class="empty-title">Nothing here</p>
+          <p id="products-empty-text" class="muted"></p>
+        </div>
+      </section>
 
-    <section aria-labelledby="login-title">
-      <h2 id="login-title">Login</h2>
-      <form id="login-form" class="row">
-        <label for="login-user">Username</label>
-        <input id="login-user" name="username" autocomplete="username" maxlength="64" required>
-        <label for="login-pass">Password</label>
-        <input id="login-pass" name="password" type="password" autocomplete="current-password" maxlength="128" required>
-        <button type="submit">Log in</button>
-      </form>
-      <p id="login-status" class="status" role="status"></p>
-    </section>
+      <aside class="orders" aria-labelledby="orders-title">
+        <div class="panel">
+          <h2 id="orders-title">Your orders</h2>
+          <ol id="orders-list" class="orders-list"></ol>
+          <p id="orders-empty" class="muted small">No orders yet. Pick something from the catalog.</p>
+
+          <form id="order-lookup" class="lookup">
+            <label for="order-id">Track an order</label>
+            <div class="lookup-row">
+              <input id="order-id" name="id" type="number" min="1" step="1" placeholder="Order number" required>
+              <button class="btn btn-secondary" type="submit">Track</button>
+            </div>
+          </form>
+          <div id="lookup-result" class="lookup-result" hidden></div>
+        </div>
+      </aside>
+    </div>
   </main>
+
+  <!-- Login view -->
+  <main id="view-login" class="view view-login" hidden>
+    <div class="login-card">
+      <svg class="login-mark" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5l-8-3Z"/>
+        <path class="brand-check" d="m8.5 12 2.5 2.5 4.5-5"/>
+      </svg>
+      <h1>Welcome back</h1>
+      <p class="muted">Sign in to your SentinelShop account.</p>
+
+      <form id="login-form" class="login-form" novalidate>
+        <div class="field">
+          <label for="login-user">Username</label>
+          <input id="login-user" name="username" autocomplete="username" maxlength="64" required>
+        </div>
+        <div class="field">
+          <label for="login-pass">Password</label>
+          <div class="password-wrap">
+            <input id="login-pass" name="password" type="password" autocomplete="current-password" maxlength="128" required>
+            <button id="toggle-pass" class="toggle-pass" type="button" aria-label="Show password" aria-pressed="false">Show</button>
+          </div>
+        </div>
+        <p id="login-error" class="form-error" role="alert" hidden></p>
+        <button id="login-submit" class="btn btn-primary btn-block" type="submit">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="btn-label">Sign in</span>
+        </button>
+      </form>
+      <a class="back-link" href="#shop">&larr; Back to the shop</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>SentinelShop &middot; lab demo store</p>
+  </footer>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
 </body>
 </html>
