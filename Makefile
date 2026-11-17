@@ -117,6 +117,10 @@ k3d-up:
 > @if [ -n "$$(docker ps -q --filter label=com.docker.compose.project=sentinelshop)" ]; then echo "compose is up: run make down first"; exit 1; fi
 > k3d registry list | grep -q k3d-shop-registry || k3d registry create shop-registry --port 127.0.0.1:5000
 > k3d cluster list | grep -q '^shop ' || k3d cluster create shop --servers 1 --agents 2 --registry-use k3d-shop-registry:5000 -p "127.0.0.1:8088:80@loadbalancer" --wait
+> for i in $$(seq 1 60); do kubectl get crd middlewares.traefik.io >/dev/null 2>&1 && break; sleep 3; done
+> kubectl wait --for=condition=Established crd/middlewares.traefik.io --timeout=60s
+> for i in $$(seq 1 60); do kubectl -n kube-system get deploy traefik >/dev/null 2>&1 && break; sleep 3; done
+> kubectl -n kube-system rollout status deploy/traefik --timeout=180s
 
 k3d-down:
 > k3d cluster delete shop
