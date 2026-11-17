@@ -59,7 +59,7 @@ Needs: Docker Engine with Compose v2, make, git, openssl. Optional: pre-commit.
 - A pre-commit hook runs gitleaks and blocks a commit that contains a secret. `make secrets` scans the history of the current branch.
 - The branch `demo/insecure` carries three planted fake flaws and is never merged. Its pipeline run must fail.
 - One accepted finding: the Ansible test container runs as root on purpose (systemd needs it). It is listed in `.trivyignore.yaml` with the reason.
-- Jenkins runs in Docker on port 8081. `make ci` runs the same checks locally.
+- Jenkins runs in Docker on port 8081; start it with `make jenkins-up`. `make ci` runs the same checks locally.
 
 ## Task 3: Kubernetes
 
