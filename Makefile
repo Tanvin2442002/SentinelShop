@@ -160,3 +160,21 @@ helm-lint:
 
 k8s-scan:
 > for e in dev prod; do echo "== $$e"; docker run --rm -v "$(CURDIR):/src" -v trivy-cache:/root/.cache/ $(TRIVY) config --severity HIGH,CRITICAL --exit-code 1 --helm-values /src/helm/shop/values-$$e.yaml /src/helm/shop || exit 1; done
+
+LOAD_DURATION ?= 10m
+
+.PHONY: chaos chaos-revert redeploy
+
+chaos:
+> @bash scripts/chaos.sh
+> @$(MAKE) --no-print-directory redeploy >/dev/null 2>&1 || { echo "redeploy failed"; exit 1; }
+> @mkdir -p evidence/chaos; t=$$(date -u +%FT%TZ); echo "chaos applied at $$t. Start your clock."; echo "$$t applied" >> evidence/chaos/timeline.txt
+> @LOAD_DURATION=$(LOAD_DURATION) nohup $(DET) --profile load run --rm loadgen >/dev/null 2>&1 &
+
+chaos-revert:
+> @bash scripts/chaos-revert.sh
+> @$(MAKE) --no-print-directory redeploy >/dev/null 2>&1 || { echo "redeploy failed"; exit 1; }
+> @t=$$(date -u +%FT%TZ); echo "chaos reverted at $$t"; echo "$$t reverted" >> evidence/chaos/timeline.txt
+
+redeploy:
+> $(MON) up -d --force-recreate catalog-api order-worker
