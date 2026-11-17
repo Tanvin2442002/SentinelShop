@@ -1,0 +1,246 @@
+test -f .env || (cp .env.example .env \
+   && sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$(openssl rand -hex 16)/; s/^SECRET_KEY=.*/SECRET_KEY=$(openssl rand -hex 32)/; s/^GRAFANA_ADMIN_PASSWORD=.*/GRAFANA_ADMIN_PASSWORD=$(openssl rand -hex 12)/" .env \
+   && echo "created .env with generated secrets")
+docker compose up -d --build --wait --wait-timeout 180
+ Image localhost:5000/web:dev Building 
+ Image localhost:5000/catalog-api:dev Building 
+ Image localhost:5000/order-worker:dev Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.42kB done
+#1 DONE 0.0s
+
+#2 [web internal] load build definition from Dockerfile
+#2 transferring dockerfile: 463B done
+#2 DONE 0.0s
+
+#3 [catalog-api internal] load build definition from Dockerfile
+#3 transferring dockerfile: 860B done
+#3 DONE 0.0s
+
+#4 [order-worker internal] load build definition from Dockerfile
+#4 transferring dockerfile: 806B done
+#4 DONE 0.0s
+
+#5 [order-worker] resolve image config for docker-image://docker.io/docker/dockerfile:1
+#5 DONE 1.5s
+
+#6 [order-worker] docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#6 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e 0.0s done
+#6 CACHED
+
+#7 [catalog-api internal] load metadata for docker.io/library/python:3.12-alpine
+#7 ...
+
+#8 [web internal] load metadata for docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine
+#8 DONE 1.1s
+
+#7 [order-worker internal] load metadata for docker.io/library/python:3.12-alpine
+#7 DONE 1.1s
+
+#9 [web internal] load .dockerignore
+#9 transferring context: 82B done
+#9 DONE 0.0s
+
+#10 [catalog-api internal] load .dockerignore
+#10 transferring context: 136B done
+#10 DONE 0.0s
+
+#11 [order-worker internal] load .dockerignore
+#11 transferring context: 136B done
+#11 DONE 0.0s
+
+#12 [web builder 1/5] FROM docker.io/library/python:3.12-alpine@sha256:c5ba3deef00c7758561a0f03c26f44f10589263d40e732b8748e0d1f38f6dd89
+#12 resolve docker.io/library/python:3.12-alpine@sha256:c5ba3deef00c7758561a0f03c26f44f10589263d40e732b8748e0d1f38f6dd89 0.0s done
+#12 DONE 0.0s
+
+#13 [web runtime 1/3] FROM docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine@sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03
+#13 resolve docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine@sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03 0.0s done
+#13 DONE 0.0s
+
+#14 [order-worker internal] load build context
+#14 transferring context: 358B done
+#14 DONE 0.0s
+
+#15 [web internal] load build context
+#15 transferring context: 134B done
+#15 DONE 0.0s
+
+#16 [catalog-api internal] load build context
+#16 transferring context: 326B done
+#16 DONE 0.0s
+
+#17 [web assets 4/4] RUN find . -name '*.map' -delete
+#17 CACHED
+
+#18 [web assets 3/4] COPY public/ ./
+#18 CACHED
+
+#19 [web runtime 2/3] RUN apk upgrade --no-cache
+#19 CACHED
+
+#20 [web assets 2/4] WORKDIR /site
+#20 CACHED
+
+#21 [web runtime 3/3] COPY --from=assets /site /usr/share/nginx/html
+#21 CACHED
+
+#22 [order-worker builder 4/5] COPY requirements.txt .
+#22 CACHED
+
+#23 [order-worker builder 5/5] RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+#23 CACHED
+
+#24 [order-worker runtime 5/6] COPY worker ./worker
+#24 CACHED
+
+#25 [order-worker runtime 4/6] COPY --from=builder /opt/venv /opt/venv
+#25 CACHED
+
+#26 [order-worker runtime 6/6] RUN apk upgrade --no-cache
+#26 CACHED
+
+#27 [catalog-api builder 4/5] COPY requirements.txt .
+#27 CACHED
+
+#28 [catalog-api builder 2/5] WORKDIR /build
+#28 CACHED
+
+#29 [catalog-api runtime 4/6] COPY --from=builder /opt/venv /opt/venv
+#29 CACHED
+
+#30 [catalog-api runtime 3/6] WORKDIR /srv
+#30 CACHED
+
+#31 [catalog-api builder 5/5] RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+#31 CACHED
+
+#32 [catalog-api builder 3/5] RUN python -m venv /opt/venv
+#32 CACHED
+
+#33 [catalog-api runtime 2/6] RUN addgroup -S -g 10001 app  && adduser -S -u 10001 -G app -H -s /sbin/nologin app
+#33 CACHED
+
+#34 [catalog-api runtime 5/6] COPY app ./app
+#34 CACHED
+
+#35 [catalog-api runtime 6/6] RUN apk upgrade --no-cache
+#35 CACHED
+
+#36 [catalog-api] exporting to image
+#36 exporting layers done
+#36 exporting manifest sha256:78a5abc16503a9d8ec9353bba63f15193b06480b3b0d0fbf5b65a925a4f01cdc done
+#36 exporting config sha256:d8d444cebf04182818bf0f305f184c463dbcd60f785ac93aa42db31806eeeb8c done
+#36 exporting attestation manifest sha256:339d9988fba12386d0d1dd9708ddcc91da659d3dfbeed993b202253bcd9b24d6 0.0s done
+#36 exporting manifest list sha256:5d439e971a9ef7b7065495a480e2a3d03a7e0b429f5139dd473f5e02d314f3f9 done
+#36 naming to localhost:5000/catalog-api:dev done
+#36 unpacking to localhost:5000/catalog-api:dev 0.0s done
+#36 DONE 0.1s
+
+#37 [order-worker] exporting to image
+#37 exporting layers done
+#37 exporting manifest sha256:4e71861e6e435c134c8438acd56f8b9e2f59961ee5bdf3b67f347657bf980aca done
+#37 exporting config sha256:d0a28b5cd7d47c4e14f418af0f4be560754babddab0a02ba58d3eec41d14de6f done
+#37 exporting attestation manifest sha256:a0ab8589259fbfc15d39da2045db889815250bd483617523d2e3bb80dcb6c17b 0.0s done
+#37 exporting manifest list sha256:03f37d51b43c180de7312516b0f9994ec0c01b6fc36cf372da1ec8c72155dd4d done
+#37 naming to localhost:5000/order-worker:dev done
+#37 unpacking to localhost:5000/order-worker:dev done
+#37 DONE 0.1s
+
+#38 [web] exporting to image
+#38 exporting layers done
+#38 exporting manifest sha256:a9619a3b28d3ec4927ec5f91e0b60541ea2141b409dd16d967ba927e39771f7c done
+#38 exporting config sha256:76824feee682cbf4a24142a6716ad0615391d2c8491ea2ea2712ffd8ac0a9ef0 done
+#38 exporting attestation manifest sha256:87b9c1010b8721e8778c3000ccddbe33a6c277d60e046138051506fc05bcd49a 0.0s done
+#38 exporting manifest list sha256:e21b5283be7b998da85afeac5d93d9f5c815016ff89336be87230ea013f93ba7 done
+#38 naming to localhost:5000/web:dev done
+#38 unpacking to localhost:5000/web:dev 0.0s done
+#38 DONE 0.1s
+
+#39 [catalog-api] resolving provenance for metadata file
+#39 DONE 0.0s
+
+#40 [order-worker] resolving provenance for metadata file
+#40 DONE 0.0s
+
+#41 [web] resolving provenance for metadata file
+#41 DONE 0.0s
+ Image localhost:5000/order-worker:dev Built 
+ Image localhost:5000/web:dev Built 
+ Image localhost:5000/catalog-api:dev Built 
+ Network sentinelshop_shop-net Creating 
+ Network sentinelshop_shop-net Created 
+ Volume sentinelshop_blocklist Creating 
+ Volume sentinelshop_blocklist Created 
+ Volume sentinelshop_shoplogs Creating 
+ Volume sentinelshop_shoplogs Created 
+ Volume sentinelshop_pgdata Creating 
+ Volume sentinelshop_pgdata Created 
+ Volume sentinelshop_redisdata Creating 
+ Volume sentinelshop_redisdata Created 
+ Container sentinelshop-log-init-1 Creating 
+ Container sentinelshop-postgres-1 Creating 
+ Container sentinelshop-redis-1 Creating 
+ Container sentinelshop-web-1 Creating 
+ Container sentinelshop-web-1 Created 
+ Container sentinelshop-redis-1 Created 
+ Container sentinelshop-log-init-1 Created 
+ Container sentinelshop-postgres-1 Created 
+ Container sentinelshop-order-worker-2 Creating 
+ Container sentinelshop-catalog-api-1 Creating 
+ Container sentinelshop-order-worker-1 Creating 
+ Container sentinelshop-catalog-api-1 Created 
+ Container sentinelshop-edge-1 Creating 
+ Container sentinelshop-order-worker-2 Created 
+ Container sentinelshop-order-worker-1 Created 
+ Container sentinelshop-edge-1 Created 
+ Container sentinelshop-redis-1 Starting 
+ Container sentinelshop-web-1 Starting 
+ Container sentinelshop-log-init-1 Starting 
+ Container sentinelshop-postgres-1 Starting 
+ Container sentinelshop-log-init-1 Started 
+ Container sentinelshop-postgres-1 Started 
+ Container sentinelshop-web-1 Started 
+ Container sentinelshop-redis-1 Started 
+ Container sentinelshop-redis-1 Waiting 
+ Container sentinelshop-postgres-1 Waiting 
+ Container sentinelshop-postgres-1 Waiting 
+ Container sentinelshop-redis-1 Waiting 
+ Container sentinelshop-postgres-1 Healthy 
+ Container sentinelshop-postgres-1 Healthy 
+ Container sentinelshop-redis-1 Healthy 
+ Container sentinelshop-catalog-api-1 Starting 
+ Container sentinelshop-redis-1 Healthy 
+ Container sentinelshop-order-worker-1 Starting 
+ Container sentinelshop-order-worker-1 Started 
+ Container sentinelshop-order-worker-2 Starting 
+ Container sentinelshop-catalog-api-1 Started 
+ Container sentinelshop-log-init-1 Waiting 
+ Container sentinelshop-catalog-api-1 Waiting 
+ Container sentinelshop-web-1 Waiting 
+ Container sentinelshop-order-worker-2 Started 
+ Container sentinelshop-log-init-1 Exited 
+ Container sentinelshop-web-1 Healthy 
+ Container sentinelshop-catalog-api-1 Healthy 
+ Container sentinelshop-edge-1 Starting 
+ Container sentinelshop-edge-1 Started 
+ Container sentinelshop-postgres-1 Waiting 
+ Container sentinelshop-redis-1 Waiting 
+ Container sentinelshop-catalog-api-1 Waiting 
+ Container sentinelshop-order-worker-1 Waiting 
+ Container sentinelshop-order-worker-2 Waiting 
+ Container sentinelshop-web-1 Waiting 
+ Container sentinelshop-edge-1 Waiting 
+ Container sentinelshop-log-init-1 Waiting 
+ Container sentinelshop-log-init-1 Exited 
+ Container sentinelshop-web-1 Healthy 
+ Container sentinelshop-redis-1 Healthy 
+ Container sentinelshop-catalog-api-1 Healthy 
+ Container sentinelshop-postgres-1 Healthy 
+ Container sentinelshop-order-worker-1 Healthy 
+ Container sentinelshop-order-worker-2 Healthy 
+ Container sentinelshop-edge-1 Healthy 
+stack is up on the port set by EDGE_PORT in .env (default 8080)
+
+real	0m21.924s
+user	0m0.556s
+sys	0m0.288s

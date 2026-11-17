@@ -1,0 +1,12 @@
+bash scripts/smoke-test.sh
+ok:   edge reachable at http://127.0.0.1:8088
+ok:   web page served
+ok:   12 products listed
+ok:   SQL injection string treated as plain text
+ok:   wildcard characters are escaped
+ok:   wrong password rejected with 401
+ok:   metrics endpoint is not exposed
+ok:   security headers present
+ok:   trace id header present
+ok:   order 1 placed and processed by the worker
+smoke test passed
