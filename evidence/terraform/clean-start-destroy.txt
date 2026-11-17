@@ -1,9 +1,9 @@
 cd terraform && terraform destroy -auto-approve -no-color
-module.cluster.terraform_data.registry: Refreshing state... [id=c1afdf8d-cc06-f8a0-e4c7-8689d6f3addf]
-module.cluster.terraform_data.cluster: Refreshing state... [id=269c84ad-58ce-eadd-a37c-ec0a2bbe2813]
+module.cluster.terraform_data.registry: Refreshing state... [id=7b4db7f2-4f1c-fc19-ba11-57948300d976]
+module.cluster.terraform_data.cluster: Refreshing state... [id=6f488816-d261-f80e-7a6a-57ac5b9b7301]
 module.platform.kubernetes_namespace_v1.shop: Refreshing state... [id=shop]
-module.platform.kubernetes_limit_range_v1.shop: Refreshing state... [id=shop/shop-limits]
 module.platform.kubernetes_resource_quota_v1.shop: Refreshing state... [id=shop/shop-quota]
+module.platform.kubernetes_limit_range_v1.shop: Refreshing state... [id=shop/shop-limits]
 module.platform.kubernetes_network_policy_v1.default_deny: Refreshing state... [id=shop/default-deny]
 
 Terraform used the selected providers to generate the following execution
@@ -14,7 +14,7 @@ Terraform will perform the following actions:
 
   # module.cluster.terraform_data.cluster will be destroyed
   - resource "terraform_data" "cluster" {
-      - id               = "269c84ad-58ce-eadd-a37c-ec0a2bbe2813" -> null
+      - id               = "6f488816-d261-f80e-7a6a-57ac5b9b7301" -> null
       - input            = {
           - cluster  = "shop-tf"
           - registry = "k3d-shop-tf-registry"
@@ -31,7 +31,7 @@ Terraform will perform the following actions:
 
   # module.cluster.terraform_data.registry will be destroyed
   - resource "terraform_data" "registry" {
-      - id     = "c1afdf8d-cc06-f8a0-e4c7-8689d6f3addf" -> null
+      - id     = "7b4db7f2-4f1c-fc19-ba11-57948300d976" -> null
       - input  = "shop-tf-registry" -> null
       - output = "shop-tf-registry" -> null
     }
@@ -46,8 +46,8 @@ Terraform will perform the following actions:
           - labels           = {} -> null
           - name             = "shop-limits" -> null
           - namespace        = "shop" -> null
-          - resource_version = "551" -> null
-          - uid              = "cd872aa9-ed1f-426f-92f6-212d1244eeff" -> null
+          - resource_version = "561" -> null
+          - uid              = "dca1ec47-4758-4467-b01d-8ce2eea250f0" -> null
             # (1 unchanged attribute hidden)
         }
 
@@ -79,8 +79,8 @@ Terraform will perform the following actions:
           - generation       = 0 -> null
           - labels           = {} -> null
           - name             = "shop" -> null
-          - resource_version = "548" -> null
-          - uid              = "ce046fef-b027-47a9-8d39-879688bbcd52" -> null
+          - resource_version = "558" -> null
+          - uid              = "20f2c400-ba4f-4579-be40-7f05323dd2d7" -> null
             # (1 unchanged attribute hidden)
         }
     }
@@ -95,8 +95,8 @@ Terraform will perform the following actions:
           - labels           = {} -> null
           - name             = "default-deny" -> null
           - namespace        = "shop" -> null
-          - resource_version = "553" -> null
-          - uid              = "812786a1-3152-4b76-b1e7-ee0f61a56124" -> null
+          - resource_version = "563" -> null
+          - uid              = "3bed026a-a8d8-47eb-a56c-ec825e111cd9" -> null
             # (1 unchanged attribute hidden)
         }
 
@@ -121,8 +121,8 @@ Terraform will perform the following actions:
           - labels           = {} -> null
           - name             = "shop-quota" -> null
           - namespace        = "shop" -> null
-          - resource_version = "554" -> null
-          - uid              = "31f8770d-f854-4bb6-a1f2-a90a4c6788bb" -> null
+          - resource_version = "564" -> null
+          - uid              = "0fa083f7-1c1b-4d23-b65a-b665ac7a8f54" -> null
             # (1 unchanged attribute hidden)
         }
 
@@ -139,16 +139,18 @@ Terraform will perform the following actions:
     }
 
 Plan: 0 to add, 0 to change, 6 to destroy.
-module.platform.kubernetes_limit_range_v1.shop: Destroying... [id=shop/shop-limits]
-module.platform.kubernetes_network_policy_v1.default_deny: Destroying... [id=shop/default-deny]
 module.platform.kubernetes_resource_quota_v1.shop: Destroying... [id=shop/shop-quota]
+module.platform.kubernetes_network_policy_v1.default_deny: Destroying... [id=shop/default-deny]
+module.platform.kubernetes_limit_range_v1.shop: Destroying... [id=shop/shop-limits]
 module.platform.kubernetes_network_policy_v1.default_deny: Destruction complete after 0s
-module.platform.kubernetes_resource_quota_v1.shop: Destruction complete after 0s
 module.platform.kubernetes_limit_range_v1.shop: Destruction complete after 0s
+module.platform.kubernetes_resource_quota_v1.shop: Destruction complete after 0s
 module.platform.kubernetes_namespace_v1.shop: Destroying... [id=shop]
 module.platform.kubernetes_namespace_v1.shop: Still destroying... [id=shop, 00m10s elapsed]
-module.platform.kubernetes_namespace_v1.shop: Destruction complete after 12s
-module.cluster.terraform_data.cluster: Destroying... [id=269c84ad-58ce-eadd-a37c-ec0a2bbe2813]
+module.platform.kubernetes_namespace_v1.shop: Still destroying... [id=shop, 00m20s elapsed]
+module.platform.kubernetes_namespace_v1.shop: Still destroying... [id=shop, 00m30s elapsed]
+module.platform.kubernetes_namespace_v1.shop: Destruction complete after 33s
+module.cluster.terraform_data.cluster: Destroying... [id=6f488816-d261-f80e-7a6a-57ac5b9b7301]
 module.cluster.terraform_data.cluster: Provisioning with 'local-exec'...
 module.cluster.terraform_data.cluster (local-exec): Executing: ["/bin/sh" "-c" "docker network disconnect k3d-shop-tf k3d-shop-tf-registry || true; k3d cluster delete shop-tf"]
 module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0000] Deleting cluster 'shop-tf'
@@ -158,7 +160,7 @@ module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0001] Removing
 module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0001] Removing standalone kubeconfig file (if there is one)...
 module.cluster.terraform_data.cluster (local-exec): [36mINFO[0m[0001] Successfully deleted cluster shop-tf!
 module.cluster.terraform_data.cluster: Destruction complete after 2s
-module.cluster.terraform_data.registry: Destroying... [id=c1afdf8d-cc06-f8a0-e4c7-8689d6f3addf]
+module.cluster.terraform_data.registry: Destroying... [id=7b4db7f2-4f1c-fc19-ba11-57948300d976]
 module.cluster.terraform_data.registry: Provisioning with 'local-exec'...
 module.cluster.terraform_data.registry (local-exec): Executing: ["/bin/sh" "-c" "k3d registry delete k3d-shop-tf-registry"]
 module.cluster.terraform_data.registry: Destruction complete after 0s

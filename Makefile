@@ -198,6 +198,7 @@ tf-destroy:
 export SHOP_DB_PASSWORD ?= testpass
 .PHONY: target-up target-down ansible-run ansible-check ansible-idempotence
 target-up: target-down
+> mkdir -p $(HOME)/.ssh && test -f $(HOME)/.ssh/shop_deploy.pub || ssh-keygen -q -t ed25519 -f $(HOME)/.ssh/shop_deploy -N ''
 > docker build -q -t shop-target -f ansible/target.Dockerfile ansible >/dev/null
 > docker run -d --name shop-target --privileged --cgroupns=host --tmpfs /run --tmpfs /run/lock -v /sys/fs/cgroup:/sys/fs/cgroup:rw -p 127.0.0.1:2222:22 shop-target >/dev/null
 > docker network create shop-bk >/dev/null
