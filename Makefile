@@ -56,7 +56,7 @@ sast:
 scan-config:
 > docker run --rm -v "$(CURDIR):/src" -v trivy-cache:/root/.cache/ $(TRIVY) config --severity HIGH,CRITICAL --exit-code 1 /src
 
-ci: secrets lint sast scan-config
+ci: secrets lint sast scan-config helm-lint k8s-scan
 
 REGISTRY ?= localhost:5000
 TAG      ?= $(shell git rev-parse --short HEAD)
@@ -128,11 +128,8 @@ k3d-secret:
 > kubectl -n shop get secret shop-secrets >/dev/null 2>&1 || { pw=$$(openssl rand -hex 16); kubectl -n shop create secret generic shop-secrets --from-literal=POSTGRES_PASSWORD=$$pw --from-literal=DATABASE_URL=postgresql://shop:$$pw@postgres:5432/shop --from-literal=SECRET_KEY=$$(openssl rand -hex 32); }
 
 deploy: k3d-secret
-> helm upgrade --install shop helm/shop -n shop --wait --wait-for-jobs --timeout 5m
+> helm upgrade --install shop helm/shop -n shop $(HELM_VALUES) $(HELM_EXTRA) --wait --wait-for-jobs --timeout 5m
 
-helm-lint:
-> helm lint helm/shop
-> diff -q services/catalog-api/db/init.sql helm/shop/files/init.sql
 
 .PHONY: k3d-smoke
 
@@ -143,3 +140,19 @@ k3d-smoke:
 
 netpol-proof:
 > bash scripts/netpol-proof.sh
+
+HELM := alpine/helm:3.22.1
+STAGE ?= dev
+HELM_VALUES := -f helm/shop/values-$(STAGE).yaml
+ifeq ($(STAGE),prod)
+HELM_VALUES := -f $(GITOPS_DIR)/values-prod.yaml -f helm/shop/values-prod.yaml
+endif
+
+.PHONY: helm-lint k8s-scan
+
+helm-lint:
+> diff -q services/catalog-api/db/init.sql helm/shop/files/init.sql
+> for e in dev prod; do docker run --rm -v "$(CURDIR):/src" -w /src $(HELM) lint helm/shop -f helm/shop/values-$$e.yaml || exit 1; done
+
+k8s-scan:
+> for e in dev prod; do echo "== $$e"; docker run --rm -v "$(CURDIR):/src" -v trivy-cache:/root/.cache/ $(TRIVY) config --severity HIGH,CRITICAL --exit-code 1 --helm-values /src/helm/shop/values-$$e.yaml /src/helm/shop || exit 1; done
