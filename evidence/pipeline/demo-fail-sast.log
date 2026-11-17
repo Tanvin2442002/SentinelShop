@@ -1,0 +1,41 @@
+docker run --rm -v "/home/mist/Documents/Projects/sentinelShop:/src" -w /src semgrep/semgrep:1.184.0 semgrep scan --config semgrep-rules/ --config p/python --config p/dockerfile --severity ERROR --metrics=off --error services
+               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 31 files tracked by git with 60 Code rules:
+                                                                                                                        
+  Language     Rules   Files          Origin      Rules                                                                 
+ ────────────────────────────        ───────────────────                                                                
+  python          56      17          Community      59                                                                 
+  dockerfile       4       3          Custom          1                                                                 
+                                                                                                                        
+                  
+                  
+┌────────────────┐
+│ 1 Code Finding │
+└────────────────┘
+                                           
+    services/catalog-api/app/demo_search.py
+   ❯❯❱ semgrep-rules.sentinelshop-sql-string-building
+          ❰❰ Blocking ❱❱
+          SQL is built from a string (f-string, %, .format or +). Pass values as parameters instead:
+          cur.execute("... WHERE name = %s", (name,))                                               
+                                                                                                    
+            3┆ cur.execute(f"SELECT id, name FROM products WHERE name LIKE '%{term}%'")
+
+                
+                
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 1 (1 blocking)
+ • Rules run: 60
+ • Targets scanned: 20
+ • Parsed lines: ~100.0%
+ • Scan was limited to files tracked by git
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 60 rules on 20 files: 1 finding.
+make: *** [Makefile:52: sast] Error 1

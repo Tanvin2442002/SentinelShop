@@ -1,0 +1,71 @@
+               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 30 files tracked by git with 693 Code rules:
+                                                                                                                        
+  Language      Rules   Files          Origin      Rules                                                                
+ ─────────────────────────────        ───────────────────                                                               
+  <multilang>      27      20          Community     693                                                                
+  python          194      16                                                                                           
+  dockerfile        7       3                                                                                           
+  js               78       1                                                                                           
+  html              1       1                                                                                           
+                                                                                                                        
+                   
+                   
+┌─────────────────┐
+│ 4 Code Findings │
+└─────────────────┘
+                            
+    services/edge/nginx.conf
+    ❯❱ generic.nginx.security.missing-internal.missing-internal
+          ❰❰ Blocking ❱❱
+          This location block contains a 'proxy_pass' directive but does not contain the 'internal' directive.
+          The 'internal' directive restricts access to this location to internal requests. Without 'internal',
+          an attacker could use your server for server-side request forgeries (SSRF). Include the 'internal'  
+          directive in this block to limit exposure.                                                          
+          Details: https://sg.run/Q5px                                                                        
+                                                                                                              
+           52┆ proxy_pass $api_upstream;
+   
+    ❯❱ generic.nginx.security.request-host-used.request-host-used
+          ❰❰ Blocking ❱❱
+          '$http_host' and '$host' variables may contain a malicious value from attacker controlled 'Host'
+          request header. Use an explicitly configured host value or a allow list for validation.         
+          Details: https://sg.run/4x3Z                                                                    
+                                                                                                          
+           53┆ proxy_set_header Host $host;
+   
+    ❯❱ generic.nginx.security.missing-internal.missing-internal
+          ❰❰ Blocking ❱❱
+          This location block contains a 'proxy_pass' directive but does not contain the 'internal' directive.
+          The 'internal' directive restricts access to this location to internal requests. Without 'internal',
+          an attacker could use your server for server-side request forgeries (SSRF). Include the 'internal'  
+          directive in this block to limit exposure.                                                          
+          Details: https://sg.run/Q5px                                                                        
+                                                                                                              
+           63┆ proxy_pass $web_upstream;
+   
+    ❯❱ generic.nginx.security.request-host-used.request-host-used
+          ❰❰ Blocking ❱❱
+          '$http_host' and '$host' variables may contain a malicious value from attacker controlled 'Host'
+          request header. Use an explicitly configured host value or a allow list for validation.         
+          Details: https://sg.run/4x3Z                                                                    
+                                                                                                          
+           64┆ proxy_set_header Host $host;
+
+                
+                
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 4 (4 blocking)
+ • Rules run: 307
+ • Targets scanned: 30
+ • Parsed lines: ~100.0%
+ • Scan was limited to files tracked by git
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 307 rules on 30 files: 4 findings.
