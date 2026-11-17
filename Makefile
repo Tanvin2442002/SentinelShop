@@ -64,7 +64,7 @@ TAG      ?= $(shell git rev-parse --short HEAD)
 .PHONY: registry build scan-images push
 
 registry:
-> curl -sf localhost:5000/v2/ >/dev/null || (docker rm -f registry 2>/dev/null; docker run -d --restart unless-stopped --name registry -p 127.0.0.1:5000:5000 registry:2.8.3)
+> docker ps --filter publish=5000 -q | grep -q . || (docker rm -f registry 2>/dev/null; docker run -d --restart unless-stopped --name registry -p 127.0.0.1:5000:5000 registry:2.8.3)
 
 build:
 > TAG=$(TAG) $(COMPOSE) build --pull --no-cache
