@@ -39,7 +39,6 @@ SERVICES := catalog-api order-worker web
 .PHONY: secrets lint sast scan-config ci
 
 secrets:
-secrets:
 > @test -z "$$(git ls-files .env)" || (echo "FAIL: .env is tracked by git" && exit 1)
 > @test -z "$$(git log --all --oneline -- .env)" || (echo "FAIL: .env appears in git history" && exit 1)
 > docker run --rm --user $(UID_GID) -v "$(CURDIR):/repo" $(GITLEAKS) git -v --redact --log-opts=HEAD -c /repo/.gitleaks.toml /repo
@@ -121,3 +120,15 @@ k3d-up:
 
 k3d-down:
 > k3d cluster delete shop
+
+.PHONY: k3d-secret deploy helm-lint
+
+k3d-secret:
+> kubectl create namespace shop --dry-run=client -o yaml | kubectl apply -f -
+> kubectl -n shop get secret shop-secrets >/dev/null 2>&1 || { pw=$$(openssl rand -hex 16); kubectl -n shop create secret generic shop-secrets --from-literal=POSTGRES_PASSWORD=$$pw --from-literal=DATABASE_URL=postgresql://shop:$$pw@postgres:5432/shop --from-literal=SECRET_KEY=$$(openssl rand -hex 32); }
+
+deploy: k3d-secret
+> helm upgrade --install shop helm/shop -n shop --wait --wait-for-jobs --timeout 5m
+
+helm-lint:
+> helm lint helm/shop
