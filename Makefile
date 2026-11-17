@@ -178,3 +178,13 @@ chaos-revert:
 
 redeploy:
 > $(MON) up -d --force-recreate catalog-api order-worker
+
+.PHONY: tf-validate tf-plan tf-apply tf-destroy
+tf-validate:
+> cd terraform && terraform init -input=false >/dev/null && terraform fmt -check -recursive && terraform validate
+tf-plan:
+> cd terraform && terraform init -input=false >/dev/null && terraform plan -no-color
+tf-apply:
+> cd terraform && terraform apply -auto-approve -no-color
+tf-destroy:
+> cd terraform && terraform destroy -auto-approve -no-color
