@@ -1,0 +1,13 @@
+2026-11-17T06:56:36Z applied
+2026-11-17T06:59:55Z first alert queuebacklog pending
+2026-11-17T07:08:49Z rule QueueBacklog threshold >50 for more than 10 mins
+2026-11-17T07:11:28Z suspect worker side
+2026-11-17T07:15:20Z suspect orders created
+2026-11-17T07:18:22Z processing time per order about 5.5s on both workers, baseline about 1.5s
+2026-11-17T07:27:58Z trace 5995bc62f807d6fbdc72be5ff775cdda: catalog-api accepted 07:04:31.481Z, worker picked 07:19:49.358Z (queue wait about 15m18s), worker completed 07:19:54.389Z (processing 5.03s, baseline 1 to 2s)
+2026-11-17T07:29:51Z POST /orders p99 87.4 ms, API accepts orders fast
+2026-11-17T07:30:33Z latency panel: every API route within baseline, only worker side is slow
+2026-11-17T07:36:35Z found: slow database writes in the worker, about 4s extra per order (2 updates x 2s), API and Redis fine, no restarts
+2026-11-17T07:49:09Z reverted
+2026-11-17T07:49:16Z fixed: ran make chaos-revert
+2026-11-17T07:49:33Z recovered: processing time about 1.5s, queue back under 50

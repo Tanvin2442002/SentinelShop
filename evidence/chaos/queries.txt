@@ -1,0 +1,3 @@
+sum(rate(orders_created_total[5m])) * 60
+sum by (result) (rate(orders_processed_total[5m])) * 60
+{service=~".+"} | json | trace_id="5995bc62f807d6fbdc72be5ff775cdda"
