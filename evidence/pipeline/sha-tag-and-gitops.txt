@@ -1,12 +1,12 @@
 == image tags in the local registry
-catalog-api: {"name":"catalog-api","tags":["7c2cfe4","dev"]}
-order-worker: {"name":"order-worker","tags":["7c2cfe4","dev"]}
-web: {"name":"web","tags":["7c2cfe4","dev"]}
+catalog-api: {"name":"catalog-api","tags":["7c2cfe4","dev","bfeb4f7"]}
+order-worker: {"name":"order-worker","tags":["7c2cfe4","dev","bfeb4f7"]}
+web: {"name":"web","tags":["7c2cfe4","dev","bfeb4f7"]}
 == gitops repo, last commits
+92e4de8 chore: set production image tag to bfeb4f7
 b621720 chore: set production image tag to e86efee
 ff52bea chore: set production image tag to 4e2698f
 5d93c0a chore: set production image tag to bf2b08a
 8aa7802 chore: set production image tag to 935324e
-ca648b5 chore: initial production values
 == production tag now
-tag: "e86efee"
+tag: "bfeb4f7"

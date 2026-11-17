@@ -1,0 +1,1023 @@
+Started by user unknown or anonymous
+Obtained Jenkinsfile from git git@github.com:Tanvin2442002/SentinelShop.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /home/mist/jenkins_home/workspace/sentinelshop
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential github-deploy
+Cloning the remote Git repository
+Cloning repository git@github.com:Tanvin2442002/SentinelShop.git
+ > git init /home/mist/jenkins_home/workspace/sentinelshop # timeout=10
+Fetching upstream changes from git@github.com:Tanvin2442002/SentinelShop.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+using GIT_SSH to set credentials 
+Verifying host key using known hosts file, will automatically accept unseen keys
+ > git fetch --tags --force --progress -- git@github.com:Tanvin2442002/SentinelShop.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url git@github.com:Tanvin2442002/SentinelShop.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision bfeb4f7bb7d160c2878cd46cfc31e4b1df9701e0 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f bfeb4f7bb7d160c2878cd46cfc31e4b1df9701e0 # timeout=10
+Commit message: "fix(make): reuse any registry already publishing port 5000"
+ > git rev-list --no-walk a4ed810db97f26faadb997b979506977610c6ad7 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timestamps
+[Pipeline] {
+[Pipeline] timeout
+[2026-11-17T15:17:42.321Z] Timeout set to expire in 30 min
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Info)
+[Pipeline] sh
+[2026-11-17T15:17:42.631Z] + rm -rf /home/mist/jenkins_home/workspace/sentinelshop@tmp/reports
+[2026-11-17T15:17:42.632Z] + git log -1 --oneline
+[2026-11-17T15:17:42.632Z] bfeb4f7 fix(make): reuse any registry already publishing port 5000
+[2026-11-17T15:17:42.632Z] + make --version
+[2026-11-17T15:17:42.632Z] + head -1
+[2026-11-17T15:17:42.632Z] GNU Make 4.4.1
+[2026-11-17T15:17:42.632Z] + docker --version
+[2026-11-17T15:17:42.632Z] Docker version 29.9.3, build 5457199
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Secrets)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] catchError
+[Pipeline] {
+[Pipeline] sh
+[2026-11-17T15:17:42.984Z] docker run --rm --user 1000:1000 -v "/home/mist/jenkins_home/workspace/sentinelshop:/repo" zricethezav/gitleaks:v8.30.1 git -v --redact --log-opts=HEAD -c /repo/.gitleaks.toml /repo
+[2026-11-17T15:17:43.235Z] 
+[2026-11-17T15:17:43.235Z]     ○
+[2026-11-17T15:17:43.235Z]     │╲
+[2026-11-17T15:17:43.235Z]     │ ○
+[2026-11-17T15:17:43.235Z]     ○ ░
+[2026-11-17T15:17:43.235Z]     ░    gitleaks
+[2026-11-17T15:17:43.235Z] 
+[2026-11-17T15:17:43.235Z] 3:17PM INF 106 commits scanned.
+[2026-11-17T15:17:43.235Z] 3:17PM INF scanned ~631932 bytes (631.93 KB) in 158ms
+[2026-11-17T15:17:43.235Z] 3:17PM INF no leaks found
+[2026-11-17T15:17:43.486Z] docker run --rm --user 1000:1000 -v "/home/mist/jenkins_home/workspace/sentinelshop:/repo" zricethezav/gitleaks:v8.30.1 dir -v --redact -c /repo/.gitleaks.toml /repo
+[2026-11-17T15:17:43.737Z] 
+[2026-11-17T15:17:43.737Z]     ○
+[2026-11-17T15:17:43.737Z]     │╲
+[2026-11-17T15:17:43.737Z]     │ ○
+[2026-11-17T15:17:43.737Z]     ○ ░
+[2026-11-17T15:17:43.737Z]     ░    gitleaks
+[2026-11-17T15:17:43.737Z] 
+[2026-11-17T15:17:43.737Z] 3:17PM INF scanned ~616350 bytes (616.35 KB) in 137ms
+[2026-11-17T15:17:43.737Z] 3:17PM INF no leaks found
+[Pipeline] }
+[Pipeline] // catchError
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Static checks)
+[Pipeline] parallel
+[Pipeline] { (Branch: Dockerfile lint)
+[Pipeline] { (Branch: SAST)
+[Pipeline] { (Branch: Config scan)
+[Pipeline] { (Branch: Helm lint)
+[Pipeline] { (Branch: K8s scan)
+[Pipeline] stage
+[Pipeline] { (Dockerfile lint)
+[Pipeline] stage
+[Pipeline] { (SAST)
+[Pipeline] stage
+[Pipeline] { (Config scan)
+[Pipeline] stage
+[Pipeline] { (Helm lint)
+[Pipeline] stage
+[Pipeline] { (K8s scan)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] catchError
+[Pipeline] {
+[Pipeline] catchError
+[Pipeline] {
+[Pipeline] catchError
+[Pipeline] {
+[Pipeline] catchError
+[Pipeline] {
+[Pipeline] catchError
+[Pipeline] {
+[Pipeline] sh
+[Pipeline] sh
+[Pipeline] sh
+[Pipeline] sh
+[Pipeline] sh
+[2026-11-17T15:17:44.545Z] for s in catalog-api order-worker web; do echo "== $s"; docker run --rm -i hadolint/hadolint:v2.15.1 < services/$s/Dockerfile || exit 1; done
+[2026-11-17T15:17:44.546Z] == catalog-api
+[2026-11-17T15:17:44.558Z] docker run --rm -v "/home/mist/jenkins_home/workspace/sentinelshop:/src" -w /src semgrep/semgrep:1.184.0 semgrep scan --config semgrep-rules/ --config p/python --config p/dockerfile --severity ERROR --metrics=off --error services
+[2026-11-17T15:17:44.572Z] docker run --rm -v "/home/mist/jenkins_home/workspace/sentinelshop:/src" -v trivy-cache:/root/.cache/ aquasec/trivy:0.76.2 config --ignorefile /src/.trivyignore.yaml --severity HIGH,CRITICAL --exit-code 1 /src
+[2026-11-17T15:17:44.583Z] diff -q services/catalog-api/db/init.sql helm/shop/files/init.sql
+[2026-11-17T15:17:44.583Z] for e in dev prod; do docker run --rm -v "/home/mist/jenkins_home/workspace/sentinelshop:/src" -w /src alpine/helm:3.22.1 lint helm/shop -f helm/shop/values-$e.yaml || exit 1; done
+[2026-11-17T15:17:44.594Z] for e in dev prod; do echo "== $e"; docker run --rm -v "/home/mist/jenkins_home/workspace/sentinelshop:/src" -v trivy-cache:/root/.cache/ aquasec/trivy:0.76.2 config --severity HIGH,CRITICAL --exit-code 1 --helm-values /src/helm/shop/values-$e.yaml /src/helm/shop || exit 1; done
+[2026-11-17T15:17:44.594Z] == dev
+[2026-11-17T15:17:44.796Z] == order-worker
+[2026-11-17T15:17:44.823Z] 2026-11-17T15:17:44Z	INFO	[misconfig] Misconfiguration scanning is enabled
+[2026-11-17T15:17:44.823Z] 2026-11-17T15:17:44Z	INFO	[checks-client] Using existing checks from cache	path="/root/.cache/trivy/policy/content"
+[2026-11-17T15:17:44.833Z] ==> Linting helm/shop
+[2026-11-17T15:17:44.833Z] [INFO] Chart.yaml: icon is recommended
+[2026-11-17T15:17:44.833Z] 
+[2026-11-17T15:17:44.833Z] 1 chart(s) linted, 0 chart(s) failed
+[2026-11-17T15:17:44.848Z] 2026-11-17T15:17:44Z	INFO	[misconfig] Misconfiguration scanning is enabled
+[2026-11-17T15:17:44.854Z] 2026-11-17T15:17:44Z	INFO	[checks-client] Using existing checks from cache	path="/root/.cache/trivy/policy/content"
+[2026-11-17T15:17:45.348Z] == web
+[2026-11-17T15:17:45.385Z] ==> Linting helm/shop
+[2026-11-17T15:17:45.385Z] [INFO] Chart.yaml: icon is recommended
+[2026-11-17T15:17:45.385Z] 
+[2026-11-17T15:17:45.385Z] 1 chart(s) linted, 0 chart(s) failed
+[Pipeline] }
+[Pipeline] // catchError
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] }
+[Pipeline] // catchError
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[2026-11-17T15:17:47.308Z] 2026-11-17T15:17:46Z	INFO	[terraform scanner] Scanning root module	file_path="terraform"
+[2026-11-17T15:17:47.308Z] 2026-11-17T15:17:46Z	INFO	Detected config files	num=22
+[2026-11-17T15:17:47.308Z] 
+[2026-11-17T15:17:47.308Z] Report Summary
+[2026-11-17T15:17:47.308Z] 
+[2026-11-17T15:17:47.308Z] ┌─────────────────────────────────────────────┬────────────┬───────────────────┐
+[2026-11-17T15:17:47.308Z] │                   Target                    │    Type    │ Misconfigurations │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ ansible/target.Dockerfile                   │ dockerfile │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ ci/jenkins/Dockerfile                       │ dockerfile │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ detection/attacker/Dockerfile               │ dockerfile │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ detection/responder/Dockerfile              │ dockerfile │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/catalog-api.yaml        │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/configmap.yaml          │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/ingress-api.yaml        │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/ingress-middleware.yaml │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/ingress-web.yaml        │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/np-baseline.yaml        │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/np-data-egress.yaml     │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/np-data-ingress.yaml    │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/np-edge.yaml            │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/order-worker.yaml       │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/postgres.yaml           │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/redis.yaml              │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/seed.yaml               │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ helm/shop/templates/web.yaml                │    helm    │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ services/catalog-api/Dockerfile             │ dockerfile │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ services/order-worker/Dockerfile            │ dockerfile │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ services/web/Dockerfile                     │ dockerfile │         0         │
+[2026-11-17T15:17:47.308Z] ├─────────────────────────────────────────────┼────────────┼───────────────────┤
+[2026-11-17T15:17:47.308Z] │ terraform                                   │ terraform  │         0         │
+[2026-11-17T15:17:47.308Z] └─────────────────────────────────────────────┴────────────┴───────────────────┘
+[2026-11-17T15:17:47.308Z] Legend:
+[2026-11-17T15:17:47.308Z] - '-': Not scanned
+[2026-11-17T15:17:47.308Z] - '0': Clean (no security findings detected)
+[2026-11-17T15:17:47.308Z] 
+[Pipeline] }
+[2026-11-17T15:17:47.341Z] 2026-11-17T15:17:46Z	INFO	Detected config files	num=14
+[2026-11-17T15:17:47.341Z] 
+[2026-11-17T15:17:47.341Z] Report Summary
+[2026-11-17T15:17:47.341Z] 
+[2026-11-17T15:17:47.341Z] ┌───────────────────────────────────┬──────┬───────────────────┐
+[2026-11-17T15:17:47.341Z] │              Target               │ Type │ Misconfigurations │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/catalog-api.yaml        │ helm │         0         │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/configmap.yaml          │ helm │         0         │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/ingress-api.yaml        │ helm │         0         │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/ingress-middleware.yaml │ helm │         0         │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/ingress-web.yaml        │ helm │         0         │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/np-baseline.yaml        │ helm │         0         │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/np-data-egress.yaml     │ helm │         0         │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/np-data-ingress.yaml    │ helm │         0         │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/np-edge.yaml            │ helm │         0         │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/order-worker.yaml       │ helm │         0         │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/postgres.yaml           │ helm │         0         │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/redis.yaml              │ helm │         0         │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/seed.yaml               │ helm │         0         │
+[2026-11-17T15:17:47.341Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:47.341Z] │ templates/web.yaml                │ helm │         0         │
+[2026-11-17T15:17:47.341Z] └───────────────────────────────────┴──────┴───────────────────┘
+[2026-11-17T15:17:47.341Z] Legend:
+[2026-11-17T15:17:47.341Z] - '-': Not scanned
+[2026-11-17T15:17:47.341Z] - '0': Clean (no security findings detected)
+[2026-11-17T15:17:47.341Z] 
+[2026-11-17T15:17:47.341Z] == prod
+[2026-11-17T15:17:47.341Z] 2026-11-17T15:17:47Z	INFO	[misconfig] Misconfiguration scanning is enabled
+[2026-11-17T15:17:47.341Z] 2026-11-17T15:17:47Z	INFO	[checks-client] Using existing checks from cache	path="/root/.cache/trivy/policy/content"
+[Pipeline] // catchError
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[2026-11-17T15:17:49.209Z] 2026-11-17T15:17:49Z	INFO	Detected config files	num=14
+[2026-11-17T15:17:49.209Z] 
+[2026-11-17T15:17:49.209Z] Report Summary
+[2026-11-17T15:17:49.209Z] 
+[2026-11-17T15:17:49.209Z] ┌───────────────────────────────────┬──────┬───────────────────┐
+[2026-11-17T15:17:49.209Z] │              Target               │ Type │ Misconfigurations │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/catalog-api.yaml        │ helm │         0         │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/configmap.yaml          │ helm │         0         │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/ingress-api.yaml        │ helm │         0         │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/ingress-middleware.yaml │ helm │         0         │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/ingress-web.yaml        │ helm │         0         │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/np-baseline.yaml        │ helm │         0         │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/np-data-egress.yaml     │ helm │         0         │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/np-data-ingress.yaml    │ helm │         0         │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/np-edge.yaml            │ helm │         0         │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/order-worker.yaml       │ helm │         0         │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/postgres.yaml           │ helm │         0         │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/redis.yaml              │ helm │         0         │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/seed.yaml               │ helm │         0         │
+[2026-11-17T15:17:49.209Z] ├───────────────────────────────────┼──────┼───────────────────┤
+[2026-11-17T15:17:49.209Z] │ templates/web.yaml                │ helm │         0         │
+[2026-11-17T15:17:49.209Z] └───────────────────────────────────┴──────┴───────────────────┘
+[2026-11-17T15:17:49.209Z] Legend:
+[2026-11-17T15:17:49.209Z] - '-': Not scanned
+[2026-11-17T15:17:49.209Z] - '0': Clean (no security findings detected)
+[2026-11-17T15:17:49.209Z] 
+[Pipeline] }
+[Pipeline] // catchError
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[2026-11-17T15:17:49.755Z]                
+[2026-11-17T15:17:49.755Z]                
+[2026-11-17T15:17:49.755Z] ┌─────────────┐
+[2026-11-17T15:17:49.755Z] │ Scan Status │
+[2026-11-17T15:17:49.755Z] └─────────────┘
+[2026-11-17T15:17:49.755Z]   Scanning 31 files tracked by git with 60 Code rules:
+[2026-11-17T15:17:49.756Z]                                                                                                                         
+[2026-11-17T15:17:49.756Z]   Language     Rules   Files          Origin      Rules                                                                 
+[2026-11-17T15:17:49.756Z]  ────────────────────────────        ───────────────────                                                                
+[2026-11-17T15:17:49.756Z]   python          56      16          Community      59                                                                 
+[2026-11-17T15:17:49.756Z]   dockerfile       4       3          Custom          1                                                                 
+[2026-11-17T15:17:49.756Z]                                                                                                                         
+[2026-11-17T15:17:49.756Z]                 
+[2026-11-17T15:17:49.756Z]                 
+[2026-11-17T15:17:49.756Z] ┌──────────────┐
+[2026-11-17T15:17:49.756Z] │ Scan Summary │
+[2026-11-17T15:17:49.756Z] └──────────────┘
+[2026-11-17T15:17:49.756Z] ✅ Scan completed successfully.
+[2026-11-17T15:17:49.756Z]  • Findings: 0 (0 blocking)
+[2026-11-17T15:17:49.756Z]  • Rules run: 60
+[2026-11-17T15:17:49.756Z]  • Targets scanned: 19
+[2026-11-17T15:17:49.756Z]  • Parsed lines: ~100.0%
+[2026-11-17T15:17:49.756Z]  • Scan was limited to files tracked by git
+[2026-11-17T15:17:49.756Z]  • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+[2026-11-17T15:17:49.756Z] Ran 60 rules on 19 files: 0 findings.
+[2026-11-17T15:17:49.756Z] (need more rules? `semgrep login` for additional free Semgrep Registry rules)
+[2026-11-17T15:17:49.756Z] 
+[2026-11-17T15:17:49.756Z] If Semgrep missed a finding, please send us feedback to let us know!
+[2026-11-17T15:17:49.756Z] See https://semgrep.dev/docs/reporting-false-negatives/
+[2026-11-17T15:17:50.007Z] --- advisory pass: all severities, does not fail the build ---
+[2026-11-17T15:17:50.007Z] docker run --rm -v "/home/mist/jenkins_home/workspace/sentinelshop:/src" -w /src semgrep/semgrep:1.184.0 semgrep scan --config p/security-audit --config p/owasp-top-ten --config p/dockerfile --metrics=off services
+[2026-11-17T15:17:55.205Z]                
+[2026-11-17T15:17:55.205Z]                
+[2026-11-17T15:17:55.205Z] ┌─────────────┐
+[2026-11-17T15:17:55.205Z] │ Scan Status │
+[2026-11-17T15:17:55.205Z] └─────────────┘
+[2026-11-17T15:17:55.205Z]   Scanning 31 files tracked by git with 693 Code rules:
+[2026-11-17T15:17:55.205Z]                                                                                                                         
+[2026-11-17T15:17:55.205Z]   Language      Rules   Files          Origin      Rules                                                                
+[2026-11-17T15:17:55.205Z]  ─────────────────────────────        ───────────────────                                                               
+[2026-11-17T15:17:55.205Z]   <multilang>      27      21          Community     693                                                                
+[2026-11-17T15:17:55.205Z]   python          194      16                                                                                           
+[2026-11-17T15:17:55.205Z]   dockerfile        7       3                                                                                           
+[2026-11-17T15:17:55.205Z]   js               78       1                                                                                           
+[2026-11-17T15:17:55.205Z]   bash              1       1                                                                                           
+[2026-11-17T15:17:55.205Z]   html              1       1                                                                                           
+[2026-11-17T15:17:55.205Z]                                                                                                                         
+[2026-11-17T15:17:55.757Z]                 
+[2026-11-17T15:17:55.757Z]                 
+[2026-11-17T15:17:55.757Z] ┌──────────────┐
+[2026-11-17T15:17:55.757Z] │ Scan Summary │
+[2026-11-17T15:17:55.757Z] └──────────────┘
+[2026-11-17T15:17:55.757Z] ✅ Scan completed successfully.
+[2026-11-17T15:17:55.757Z]  • Findings: 0 (0 blocking)
+[2026-11-17T15:17:55.757Z]  • Rules run: 308
+[2026-11-17T15:17:55.757Z]  • Targets scanned: 31
+[2026-11-17T15:17:55.757Z]  • Parsed lines: ~100.0%
+[2026-11-17T15:17:55.757Z]  • Scan was limited to files tracked by git
+[2026-11-17T15:17:55.757Z]  • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+[2026-11-17T15:17:55.757Z] Ran 308 rules on 31 files: 0 findings.
+[2026-11-17T15:17:55.757Z] (need more rules? `semgrep login` for additional free Semgrep Registry rules)
+[2026-11-17T15:17:55.757Z] 
+[2026-11-17T15:17:55.757Z] If Semgrep missed a finding, please send us feedback to let us know!
+[2026-11-17T15:17:55.757Z] See https://semgrep.dev/docs/reporting-false-negatives/
+[Pipeline] }
+[Pipeline] // catchError
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // parallel
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Prepare)
+[Pipeline] sh
+[2026-11-17T15:17:56.437Z] + make env
+[2026-11-17T15:17:56.437Z] test -f .env || (cp .env.example .env \
+[2026-11-17T15:17:56.437Z]    && sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$(openssl rand -hex 16)/; s/^SECRET_KEY=.*/SECRET_KEY=$(openssl rand -hex 32)/; s/^GRAFANA_ADMIN_PASSWORD=.*/GRAFANA_ADMIN_PASSWORD=$(openssl rand -hex 12)/" .env \
+[2026-11-17T15:17:56.437Z]    && echo "created .env with generated secrets")
+[2026-11-17T15:17:56.437Z] created .env with generated secrets
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
+[2026-11-17T15:17:56.789Z] TAG=bfeb4f7 docker compose build --pull --no-cache
+[2026-11-17T15:17:56.789Z]  Image localhost:5000/web:bfeb4f7 Building 
+[2026-11-17T15:17:56.789Z]  Image localhost:5000/catalog-api:bfeb4f7 Building 
+[2026-11-17T15:17:56.789Z]  Image localhost:5000/order-worker:bfeb4f7 Building 
+[2026-11-17T15:17:57.040Z] #1 [internal] load local bake definitions
+[2026-11-17T15:17:57.040Z] #1 reading from stdin 1.79kB done
+[2026-11-17T15:17:57.040Z] #1 DONE 0.0s
+[2026-11-17T15:17:57.291Z] 
+[2026-11-17T15:17:57.291Z] #2 [catalog-api internal] load build definition from Dockerfile
+[2026-11-17T15:17:57.291Z] #2 transferring dockerfile: 860B done
+[2026-11-17T15:17:57.291Z] #2 DONE 0.0s
+[2026-11-17T15:17:57.291Z] 
+[2026-11-17T15:17:57.291Z] #3 [order-worker internal] load build definition from Dockerfile
+[2026-11-17T15:17:57.291Z] #3 transferring dockerfile: 806B done
+[2026-11-17T15:17:57.291Z] #3 DONE 0.0s
+[2026-11-17T15:17:57.291Z] 
+[2026-11-17T15:17:57.291Z] #4 [web internal] load build definition from Dockerfile
+[2026-11-17T15:17:57.291Z] #4 transferring dockerfile: 463B done
+[2026-11-17T15:17:57.291Z] #4 DONE 0.0s
+[2026-11-17T15:17:57.291Z] 
+[2026-11-17T15:17:57.291Z] #5 [web] resolve image config for docker-image://docker.io/docker/dockerfile:1
+[2026-11-17T15:17:58.635Z] #5 DONE 1.5s
+[2026-11-17T15:17:58.635Z] 
+[2026-11-17T15:17:58.635Z] #6 [web] docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+[2026-11-17T15:17:58.635Z] #6 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e 0.0s done
+[2026-11-17T15:17:58.635Z] #6 CACHED
+[2026-11-17T15:17:58.635Z] 
+[2026-11-17T15:17:58.635Z] #7 [catalog-api internal] load metadata for docker.io/library/python:3.12-alpine
+[2026-11-17T15:17:59.979Z] #7 DONE 1.2s
+[2026-11-17T15:17:59.980Z] 
+[2026-11-17T15:17:59.980Z] #8 [order-worker internal] load .dockerignore
+[2026-11-17T15:17:59.980Z] #8 transferring context: 136B done
+[2026-11-17T15:17:59.980Z] #8 DONE 0.0s
+[2026-11-17T15:17:59.980Z] 
+[2026-11-17T15:17:59.980Z] #9 [catalog-api internal] load .dockerignore
+[2026-11-17T15:17:59.980Z] #9 transferring context: 136B done
+[2026-11-17T15:17:59.980Z] #9 DONE 0.0s
+[2026-11-17T15:17:59.980Z] 
+[2026-11-17T15:17:59.980Z] #10 [catalog-api builder 2/5] WORKDIR /build
+[2026-11-17T15:17:59.980Z] #10 CACHED
+[2026-11-17T15:17:59.980Z] 
+[2026-11-17T15:17:59.980Z] #11 [catalog-api builder 1/5] FROM docker.io/library/python:3.12-alpine@sha256:c5ba3deef00c7758561a0f03c26f44f10589263d40e732b8748e0d1f38f6dd89
+[2026-11-17T15:17:59.980Z] #11 resolve docker.io/library/python:3.12-alpine@sha256:c5ba3deef00c7758561a0f03c26f44f10589263d40e732b8748e0d1f38f6dd89 0.0s done
+[2026-11-17T15:17:59.980Z] #11 CACHED
+[2026-11-17T15:17:59.980Z] 
+[2026-11-17T15:17:59.980Z] #12 [catalog-api internal] load build context
+[2026-11-17T15:17:59.980Z] #12 transferring context: 24.97kB done
+[2026-11-17T15:17:59.980Z] #12 DONE 0.0s
+[2026-11-17T15:17:59.980Z] 
+[2026-11-17T15:17:59.980Z] #13 [order-worker internal] load build context
+[2026-11-17T15:17:59.980Z] #13 transferring context: 16.82kB done
+[2026-11-17T15:17:59.980Z] #13 DONE 0.0s
+[2026-11-17T15:17:59.980Z] 
+[2026-11-17T15:17:59.980Z] #14 [order-worker builder 3/5] RUN python -m venv /opt/venv
+[2026-11-17T15:18:00.230Z] #14 ...
+[2026-11-17T15:18:00.231Z] 
+[2026-11-17T15:18:00.231Z] #15 [order-worker runtime 2/6] RUN addgroup -S -g 10001 app  && adduser -S -u 10001 -G app -H -s /sbin/nologin app
+[2026-11-17T15:18:00.231Z] #15 DONE 0.2s
+[2026-11-17T15:18:00.231Z] 
+[2026-11-17T15:18:00.231Z] #16 [order-worker runtime 3/6] WORKDIR /srv
+[2026-11-17T15:18:00.231Z] #16 DONE 0.0s
+[2026-11-17T15:18:00.481Z] 
+[2026-11-17T15:18:00.481Z] #17 [web internal] load metadata for docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine
+[2026-11-17T15:18:00.732Z] #17 DONE 2.1s
+[2026-11-17T15:18:00.734Z] 
+[2026-11-17T15:18:00.734Z] #14 [order-worker builder 3/5] RUN python -m venv /opt/venv
+[2026-11-17T15:18:00.985Z] #14 ...
+[2026-11-17T15:18:00.985Z] 
+[2026-11-17T15:18:00.985Z] #11 [web builder 1/5] FROM docker.io/library/python:3.12-alpine@sha256:c5ba3deef00c7758561a0f03c26f44f10589263d40e732b8748e0d1f38f6dd89
+[2026-11-17T15:18:00.985Z] #11 resolve docker.io/library/python:3.12-alpine@sha256:c5ba3deef00c7758561a0f03c26f44f10589263d40e732b8748e0d1f38f6dd89 0.0s done
+[2026-11-17T15:18:00.985Z] #11 CACHED
+[2026-11-17T15:18:00.985Z] 
+[2026-11-17T15:18:00.985Z] #18 [web internal] load .dockerignore
+[2026-11-17T15:18:00.985Z] #18 transferring context: 82B done
+[2026-11-17T15:18:00.985Z] #18 DONE 0.0s
+[2026-11-17T15:18:00.985Z] 
+[2026-11-17T15:18:00.985Z] #19 [web assets 2/4] WORKDIR /site
+[2026-11-17T15:18:00.985Z] #19 CACHED
+[2026-11-17T15:18:00.985Z] 
+[2026-11-17T15:18:00.985Z] #20 [web internal] load build context
+[2026-11-17T15:18:00.985Z] #20 transferring context: 36.25kB done
+[2026-11-17T15:18:00.985Z] #20 DONE 0.0s
+[2026-11-17T15:18:00.985Z] 
+[2026-11-17T15:18:00.985Z] #21 [web assets 3/4] COPY public/ ./
+[2026-11-17T15:18:00.985Z] #21 DONE 0.0s
+[2026-11-17T15:18:00.985Z] 
+[2026-11-17T15:18:00.985Z] #22 [web runtime 1/3] FROM docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine@sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03
+[2026-11-17T15:18:00.985Z] #22 resolve docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine@sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03 0.0s done
+[2026-11-17T15:18:00.985Z] #22 CACHED
+[2026-11-17T15:18:00.985Z] 
+[2026-11-17T15:18:00.985Z] #23 [web assets 4/4] RUN find . -name '*.map' -delete
+[2026-11-17T15:18:00.985Z] #23 DONE 0.2s
+[2026-11-17T15:18:00.985Z] 
+[2026-11-17T15:18:00.985Z] #24 [web runtime 2/3] RUN apk upgrade --no-cache
+[2026-11-17T15:18:02.330Z] #24 1.356 Preupgrading:
+[2026-11-17T15:18:02.330Z] #24 1.356 (1/2) Upgrading libapk (3.0.8-r0 -> 3.0.9-r0)
+[2026-11-17T15:18:02.330Z] #24 1.416 (2/2) Upgrading apk-tools (3.0.8-r0 -> 3.0.9-r0)
+[2026-11-17T15:18:02.330Z] #24 1.473 Executing busybox-1.37.0-r31.trigger
+[2026-11-17T15:18:02.581Z] #24 1.524 Continuing with the main upgrade transaction:
+[2026-11-17T15:18:03.133Z] #24 2.347 ( 1/13) Upgrading musl (1.2.6-r2 -> 1.2.6-r3)
+[2026-11-17T15:18:03.383Z] #24 2.414 ( 2/13) Upgrading alpine-release (3.24.2-r0 -> 3.24.4-r0)
+[2026-11-17T15:18:03.383Z] #24 2.469 ( 3/13) Upgrading zlib (1.3.2-r0 -> 1.4-r0)
+[2026-11-17T15:18:03.383Z] #24 2.525 ( 4/13) Upgrading ca-certificates-bundle (20260909-r0 -> 20261020-r0)
+[2026-11-17T15:18:03.383Z] #24 2.583 ( 5/13) Upgrading ca-certificates (20260909-r0 -> 20261020-r0)
+[2026-11-17T15:18:03.634Z] #24 2.656 ( 6/13) Upgrading brotli-libs (1.2.0-r1 -> 1.2.1-r0)
+[2026-11-17T15:18:03.634Z] #24 2.724 ( 7/13) Upgrading c-ares (1.34.8-r0 -> 1.34.9-r0)
+[2026-11-17T15:18:03.634Z] #24 2.781 ( 8/13) Upgrading libcurl (8.22.0-r0 -> 8.23.0-r0)
+[2026-11-17T15:18:03.634Z] #24 2.848 ( 9/13) Upgrading curl (8.22.0-r0 -> 8.23.0-r0)
+[2026-11-17T15:18:03.884Z] #24 2.907 (10/13) Upgrading musl-utils (1.2.6-r2 -> 1.2.6-r3)
+[2026-11-17T15:18:03.884Z] #24 2.963 (11/13) Upgrading libexpat (2.9.0-r0 -> 2.10.0-r0)
+[2026-11-17T15:18:03.885Z] #24 3.019 (12/13) Upgrading libxslt (1.1.43-r3 -> 1.1.43-r4)
+[2026-11-17T15:18:03.885Z] #24 3.080 (13/13) Upgrading tzdata (2026e-r0 -> 2026f-r0)
+[2026-11-17T15:18:04.137Z] #24 3.192 Executing busybox-1.37.0-r31.trigger
+[2026-11-17T15:18:04.137Z] #24 3.200 Executing ca-certificates-20261020-r0.trigger
+[2026-11-17T15:18:04.137Z] #24 3.249 OK: 51.2 MiB in 70 packages
+[2026-11-17T15:18:04.137Z] #24 DONE 3.4s
+[2026-11-17T15:18:04.137Z] 
+[2026-11-17T15:18:04.137Z] #14 [order-worker builder 3/5] RUN python -m venv /opt/venv
+[2026-11-17T15:18:04.388Z] #14 ...
+[2026-11-17T15:18:04.388Z] 
+[2026-11-17T15:18:04.388Z] #25 [web runtime 3/3] COPY --from=assets /site /usr/share/nginx/html
+[2026-11-17T15:18:04.388Z] #25 DONE 0.1s
+[2026-11-17T15:18:04.639Z] 
+[2026-11-17T15:18:04.639Z] #26 [web] exporting to image
+[2026-11-17T15:18:04.640Z] #26 exporting layers
+[2026-11-17T15:18:04.890Z] #26 exporting layers 0.5s done
+[2026-11-17T15:18:05.141Z] #26 exporting manifest sha256:27dc9dbab65a0965b4ddb1079c2653dffd8ca6c02b395393ea87ae510736686e done
+[2026-11-17T15:18:05.141Z] #26 exporting config sha256:8ecf22b6afc5a336cd9b703c9f58ebfae42ac290bd976b9b4df0bc20879f4fd6 done
+[2026-11-17T15:18:05.141Z] #26 exporting attestation manifest sha256:f1417e42e5f8530e203b35c202e91238a5bf6ea89edf80f190149b3ac75d5670 0.0s done
+[2026-11-17T15:18:05.141Z] #26 exporting manifest list sha256:6cd2266c8a9890c72bc3737b4d2005acec64e5618cffff3c51c0e09aa358bdda done
+[2026-11-17T15:18:05.141Z] #26 naming to localhost:5000/web:bfeb4f7 done
+[2026-11-17T15:18:05.141Z] #26 unpacking to localhost:5000/web:bfeb4f7
+[2026-11-17T15:18:05.141Z] #26 unpacking to localhost:5000/web:bfeb4f7 0.2s done
+[2026-11-17T15:18:05.141Z] #26 DONE 0.8s
+[2026-11-17T15:18:05.141Z] 
+[2026-11-17T15:18:05.141Z] #14 [order-worker builder 3/5] RUN python -m venv /opt/venv
+[2026-11-17T15:18:05.391Z] #14 DONE 5.3s
+[2026-11-17T15:18:05.392Z] 
+[2026-11-17T15:18:05.392Z] #27 [order-worker builder 4/5] COPY requirements.txt .
+[2026-11-17T15:18:05.392Z] #27 DONE 0.0s
+[2026-11-17T15:18:05.392Z] 
+[2026-11-17T15:18:05.392Z] #28 [catalog-api builder 4/5] COPY requirements.txt .
+[2026-11-17T15:18:05.392Z] #28 DONE 0.0s
+[2026-11-17T15:18:05.392Z] 
+[2026-11-17T15:18:05.392Z] #29 [web] resolving provenance for metadata file
+[2026-11-17T15:18:05.392Z] #29 DONE 0.0s
+[2026-11-17T15:18:05.392Z] 
+[2026-11-17T15:18:05.392Z] #30 [order-worker builder 5/5] RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+[2026-11-17T15:18:05.943Z] #30 0.845 Collecting psycopg==3.3.9 (from psycopg[binary]==3.3.9->-r requirements.txt (line 2))
+[2026-11-17T15:18:06.194Z] #30 1.059   Downloading psycopg-3.3.9-py3-none-any.whl.metadata (4.4 kB)
+[2026-11-17T15:18:06.445Z] #30 1.095 Collecting psycopg-pool==3.3.3 (from -r requirements.txt (line 3))
+[2026-11-17T15:18:06.445Z] #30 1.109   Downloading psycopg_pool-3.3.3-py3-none-any.whl.metadata (2.8 kB)
+[2026-11-17T15:18:06.445Z] #30 1.164 Collecting redis==8.1.0 (from -r requirements.txt (line 4))
+[2026-11-17T15:18:06.445Z] #30 1.175   Downloading redis-8.1.0-py3-none-any.whl.metadata (16 kB)
+[2026-11-17T15:18:06.445Z] #30 1.206 Collecting prometheus-client==0.26.0 (from -r requirements.txt (line 5))
+[2026-11-17T15:18:06.445Z] #30 1.216   Downloading prometheus_client-0.26.0-py3-none-any.whl.metadata (2.1 kB)
+[2026-11-17T15:18:06.445Z] #30 1.246 Collecting typing-extensions>=4.6 (from psycopg==3.3.9->psycopg[binary]==3.3.9->-r requirements.txt (line 2))
+[2026-11-17T15:18:06.445Z] #30 1.257   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+[2026-11-17T15:18:06.696Z] #30 1.507 Collecting psycopg-binary==3.3.9 (from psycopg[binary]==3.3.9->-r requirements.txt (line 2))
+[2026-11-17T15:18:06.696Z] #30 1.519   Downloading psycopg_binary-3.3.9-cp312-cp312-musllinux_1_2_x86_64.whl.metadata (2.7 kB)
+[2026-11-17T15:18:06.696Z] #30 1.533 Downloading psycopg-3.3.9-py3-none-any.whl (219 kB)
+[2026-11-17T15:18:06.696Z] #30 1.567 Downloading psycopg_pool-3.3.3-py3-none-any.whl (40 kB)
+[2026-11-17T15:18:06.696Z] #30 1.582 Downloading redis-8.1.0-py3-none-any.whl (560 kB)
+[2026-11-17T15:18:06.696Z] #30 1.597    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 560.6/560.6 kB 86.2 MB/s eta 0:00:00
+[2026-11-17T15:18:06.696Z] #30 1.609 Downloading prometheus_client-0.26.0-py3-none-any.whl (64 kB)
+[2026-11-17T15:18:06.948Z] #30 1.622 Downloading psycopg_binary-3.3.9-cp312-cp312-musllinux_1_2_x86_64.whl (3.6 MB)
+[2026-11-17T15:18:06.948Z] #30 1.657    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.6/3.6 MB 116.7 MB/s eta 0:00:00
+[2026-11-17T15:18:06.948Z] #30 1.668 Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+[2026-11-17T15:18:06.948Z] #30 1.714 Installing collected packages: typing-extensions, redis, psycopg-binary, prometheus-client, psycopg-pool, psycopg
+[2026-11-17T15:18:08.292Z] #30 3.074 Successfully installed prometheus-client-0.26.0 psycopg-3.3.9 psycopg-binary-3.3.9 psycopg-pool-3.3.3 redis-8.1.0 typing-extensions-4.16.0
+[2026-11-17T15:18:08.292Z] #30 3.180 
+[2026-11-17T15:18:08.292Z] #30 3.180 [notice] A new release of pip is available: 25.0.1 -> 26.3
+[2026-11-17T15:18:08.292Z] #30 3.180 [notice] To update, run: python -m pip install --upgrade pip
+[2026-11-17T15:18:08.543Z] #30 DONE 3.3s
+[2026-11-17T15:18:08.543Z] 
+[2026-11-17T15:18:08.543Z] #31 [catalog-api builder 5/5] RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+[2026-11-17T15:18:08.543Z] #31 0.939 Collecting fastapi==0.163.1 (from -r requirements.txt (line 2))
+[2026-11-17T15:18:08.543Z] #31 1.061   Downloading fastapi-0.163.1-py3-none-any.whl.metadata (27 kB)
+[2026-11-17T15:18:08.543Z] #31 1.125 Collecting uvicorn==0.54.0 (from -r requirements.txt (line 3))
+[2026-11-17T15:18:08.543Z] #31 1.136   Downloading uvicorn-0.54.0-py3-none-any.whl.metadata (6.6 kB)
+[2026-11-17T15:18:08.543Z] #31 1.166 Collecting psycopg==3.3.9 (from psycopg[binary]==3.3.9->-r requirements.txt (line 4))
+[2026-11-17T15:18:08.543Z] #31 1.177   Downloading psycopg-3.3.9-py3-none-any.whl.metadata (4.4 kB)
+[2026-11-17T15:18:08.543Z] #31 1.204 Collecting psycopg-pool==3.3.3 (from -r requirements.txt (line 5))
+[2026-11-17T15:18:08.543Z] #31 1.215   Downloading psycopg_pool-3.3.3-py3-none-any.whl.metadata (2.8 kB)
+[2026-11-17T15:18:08.543Z] #31 1.281 Collecting redis==8.1.0 (from -r requirements.txt (line 6))
+[2026-11-17T15:18:08.543Z] #31 1.292   Downloading redis-8.1.0-py3-none-any.whl.metadata (16 kB)
+[2026-11-17T15:18:08.543Z] #31 1.321 Collecting prometheus-client==0.26.0 (from -r requirements.txt (line 7))
+[2026-11-17T15:18:08.543Z] #31 1.332   Downloading prometheus_client-0.26.0-py3-none-any.whl.metadata (2.1 kB)
+[2026-11-17T15:18:08.543Z] #31 1.383 Collecting starlette>=0.46.0 (from fastapi==0.163.1->-r requirements.txt (line 2))
+[2026-11-17T15:18:08.543Z] #31 1.394   Downloading starlette-1.10.0-py3-none-any.whl.metadata (6.6 kB)
+[2026-11-17T15:18:08.543Z] #31 1.435 Collecting anyio>=4.1.0 (from fastapi==0.163.1->-r requirements.txt (line 2))
+[2026-11-17T15:18:08.543Z] #31 1.446   Downloading anyio-4.16.0-py3-none-any.whl.metadata (4.7 kB)
+[2026-11-17T15:18:08.543Z] #31 1.611 Collecting pydantic>=2.9.0 (from fastapi==0.163.1->-r requirements.txt (line 2))
+[2026-11-17T15:18:08.543Z] #31 1.622   Downloading pydantic-2.14.3-py3-none-any.whl.metadata (141 kB)
+[2026-11-17T15:18:08.543Z] #31 1.680 Collecting typing-extensions>=4.8.0 (from fastapi==0.163.1->-r requirements.txt (line 2))
+[2026-11-17T15:18:08.543Z] #31 1.691   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+[2026-11-17T15:18:08.543Z] #31 1.705 Collecting typing-inspection>=0.4.2 (from fastapi==0.163.1->-r requirements.txt (line 2))
+[2026-11-17T15:18:08.543Z] #31 1.716   Downloading typing_inspection-0.4.5-py3-none-any.whl.metadata (2.6 kB)
+[2026-11-17T15:18:08.543Z] #31 1.733 Collecting annotated-doc>=0.0.2 (from fastapi==0.163.1->-r requirements.txt (line 2))
+[2026-11-17T15:18:08.543Z] #31 1.746   Downloading annotated_doc-0.0.6-py3-none-any.whl.metadata (6.5 kB)
+[2026-11-17T15:18:08.543Z] #31 1.777 Collecting opentelemetry-api>=1.44.0 (from fastapi==0.163.1->-r requirements.txt (line 2))
+[2026-11-17T15:18:08.543Z] #31 1.791   Downloading opentelemetry_api-1.45.2-py3-none-any.whl.metadata (1.4 kB)
+[2026-11-17T15:18:08.543Z] #31 1.818 Collecting click>=7.0 (from uvicorn==0.54.0->-r requirements.txt (line 3))
+[2026-11-17T15:18:08.543Z] #31 1.829   Downloading click-8.5.1-py3-none-any.whl.metadata (2.6 kB)
+[2026-11-17T15:18:08.543Z] #31 1.846 Collecting h11>=0.8 (from uvicorn==0.54.0->-r requirements.txt (line 3))
+[2026-11-17T15:18:08.543Z] #31 1.857   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+[2026-11-17T15:18:08.543Z] #31 2.101 Collecting psycopg-binary==3.3.9 (from psycopg[binary]==3.3.9->-r requirements.txt (line 4))
+[2026-11-17T15:18:08.543Z] #31 2.112   Downloading psycopg_binary-3.3.9-cp312-cp312-musllinux_1_2_x86_64.whl.metadata (2.7 kB)
+[2026-11-17T15:18:08.543Z] #31 2.137 Collecting idna>=2.8 (from anyio>=4.1.0->fastapi==0.163.1->-r requirements.txt (line 2))
+[2026-11-17T15:18:08.543Z] #31 2.147   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+[2026-11-17T15:18:08.543Z] #31 2.184 Collecting annotated-types>=0.6.0 (from pydantic>=2.9.0->fastapi==0.163.1->-r requirements.txt (line 2))
+[2026-11-17T15:18:08.543Z] #31 2.196   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+[2026-11-17T15:18:08.543Z] #31 3.193 Collecting pydantic-core==2.50.4 (from pydantic>=2.9.0->fastapi==0.163.1->-r requirements.txt (line 2))
+[2026-11-17T15:18:08.543Z] #31 3.205   Downloading pydantic_core-2.50.4-cp312-cp312-musllinux_1_1_x86_64.whl.metadata (6.6 kB)
+[2026-11-17T15:18:08.543Z] #31 3.251 Downloading fastapi-0.163.1-py3-none-any.whl (154 kB)
+[2026-11-17T15:18:08.543Z] #31 3.266 Downloading uvicorn-0.54.0-py3-none-any.whl (87 kB)
+[2026-11-17T15:18:08.543Z] #31 3.280 Downloading psycopg-3.3.9-py3-none-any.whl (219 kB)
+[2026-11-17T15:18:08.543Z] #31 3.292 Downloading psycopg_pool-3.3.3-py3-none-any.whl (40 kB)
+[2026-11-17T15:18:08.543Z] #31 3.307 Downloading redis-8.1.0-py3-none-any.whl (560 kB)
+[2026-11-17T15:18:08.543Z] #31 3.317    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 560.6/560.6 kB 56.6 MB/s eta 0:00:00
+[2026-11-17T15:18:08.543Z] #31 3.330 Downloading prometheus_client-0.26.0-py3-none-any.whl (64 kB)
+[2026-11-17T15:18:08.543Z] #31 3.343 Downloading psycopg_binary-3.3.9-cp312-cp312-musllinux_1_2_x86_64.whl (3.6 MB)
+[2026-11-17T15:18:08.543Z] #31 3.382    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.6/3.6 MB 116.2 MB/s eta 0:00:00
+[2026-11-17T15:18:08.543Z] #31 3.393 Downloading annotated_doc-0.0.6-py3-none-any.whl (5.3 kB)
+[2026-11-17T15:18:08.794Z] #31 3.405 Downloading anyio-4.16.0-py3-none-any.whl (134 kB)
+[2026-11-17T15:18:08.794Z] #31 3.417 Downloading click-8.5.1-py3-none-any.whl (126 kB)
+[2026-11-17T15:18:08.794Z] #31 3.432 Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+[2026-11-17T15:18:08.794Z] #31 3.448 Downloading opentelemetry_api-1.45.2-py3-none-any.whl (60 kB)
+[2026-11-17T15:18:08.794Z] #31 3.462 Downloading pydantic-2.14.3-py3-none-any.whl (494 kB)
+[2026-11-17T15:18:08.794Z] #31 3.481 Downloading pydantic_core-2.50.4-cp312-cp312-musllinux_1_1_x86_64.whl (2.5 MB)
+[2026-11-17T15:18:08.794Z] #31 3.503    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.5/2.5 MB 125.3 MB/s eta 0:00:00
+[2026-11-17T15:18:08.794Z] #31 3.513 Downloading starlette-1.10.0-py3-none-any.whl (80 kB)
+[2026-11-17T15:18:08.794Z] #31 3.533 Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+[2026-11-17T15:18:08.794Z] #31 3.538 Downloading typing_inspection-0.4.5-py3-none-any.whl (14 kB)
+[2026-11-17T15:18:08.794Z] #31 3.550 Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+[2026-11-17T15:18:08.794Z] #31 3.562 Downloading idna-3.20-py3-none-any.whl (69 kB)
+[2026-11-17T15:18:08.794Z] #31 3.690 Installing collected packages: typing-extensions, redis, psycopg-binary, prometheus-client, idna, h11, click, annotated-types, annotated-doc, uvicorn, typing-inspection, pydantic-core, psycopg-pool, psycopg, opentelemetry-api, anyio, starlette, pydantic, fastapi
+[2026-11-17T15:18:09.045Z] #31 ...
+[2026-11-17T15:18:09.045Z] 
+[2026-11-17T15:18:09.045Z] #32 [order-worker runtime 4/6] COPY --from=builder /opt/venv /opt/venv
+[2026-11-17T15:18:09.045Z] #32 DONE 0.2s
+[2026-11-17T15:18:09.045Z] 
+[2026-11-17T15:18:09.045Z] #33 [order-worker runtime 5/6] COPY worker ./worker
+[2026-11-17T15:18:09.045Z] #33 DONE 0.0s
+[2026-11-17T15:18:09.296Z] 
+[2026-11-17T15:18:09.296Z] #34 [order-worker runtime 6/6] RUN apk upgrade --no-cache
+[2026-11-17T15:18:10.207Z] #34 1.072 (1/2) Upgrading krb5-libs (1.22.2-r1 -> 1.22.3-r0)
+[2026-11-17T15:18:10.207Z] #34 1.149 (2/2) Upgrading zlib (1.3.2-r1 -> 1.4-r0)
+[2026-11-17T15:18:10.207Z] #34 1.207 OK: 13.5 MiB in 38 packages
+[2026-11-17T15:18:10.458Z] #34 DONE 1.3s
+[2026-11-17T15:18:10.458Z] 
+[2026-11-17T15:18:10.458Z] #35 [order-worker] exporting to image
+[2026-11-17T15:18:10.458Z] #35 exporting layers
+[2026-11-17T15:18:12.324Z] #35 ...
+[2026-11-17T15:18:12.324Z] 
+[2026-11-17T15:18:12.324Z] #31 [catalog-api builder 5/5] RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+[2026-11-17T15:18:12.324Z] #31 6.629 Successfully installed annotated-doc-0.0.6 annotated-types-0.8.0 anyio-4.16.0 click-8.5.1 fastapi-0.163.1 h11-0.16.0 idna-3.20 opentelemetry-api-1.45.2 prometheus-client-0.26.0 psycopg-3.3.9 psycopg-binary-3.3.9 psycopg-pool-3.3.3 pydantic-2.14.3 pydantic-core-2.50.4 redis-8.1.0 starlette-1.10.0 typing-extensions-4.16.0 typing-inspection-0.4.5 uvicorn-0.54.0
+[2026-11-17T15:18:12.324Z] #31 6.733 
+[2026-11-17T15:18:12.324Z] #31 6.733 [notice] A new release of pip is available: 25.0.1 -> 26.3
+[2026-11-17T15:18:12.324Z] #31 6.733 [notice] To update, run: python -m pip install --upgrade pip
+[2026-11-17T15:18:12.324Z] #31 DONE 6.9s
+[2026-11-17T15:18:12.324Z] 
+[2026-11-17T15:18:12.324Z] #35 [order-worker] exporting to image
+[2026-11-17T15:18:12.324Z] #35 exporting layers 2.0s done
+[2026-11-17T15:18:12.324Z] #35 exporting manifest sha256:b467399d953bb981ef37c0763a1620d300055caf66cffd67dffda494e973b0a7 done
+[2026-11-17T15:18:12.324Z] #35 exporting config sha256:f192240898dd8bf2b911d2c7c39fa96cd289978931f2425a7947483e56962a6f done
+[2026-11-17T15:18:12.324Z] #35 exporting attestation manifest sha256:98b8d4f6fb5d236df48d742052f848455eca74d7abc4cc70899c374516e78fca 0.0s done
+[2026-11-17T15:18:12.324Z] #35 exporting manifest list sha256:f202d31954ef277ba004204e412cedd71ce8f54f49f9c1cc265235e2e4158a88 done
+[2026-11-17T15:18:12.324Z] #35 naming to localhost:5000/order-worker:bfeb4f7 done
+[2026-11-17T15:18:12.324Z] #35 unpacking to localhost:5000/order-worker:bfeb4f7
+[2026-11-17T15:18:12.875Z] #35 ...
+[2026-11-17T15:18:12.875Z] 
+[2026-11-17T15:18:12.875Z] #36 [catalog-api runtime 4/6] COPY --from=builder /opt/venv /opt/venv
+[2026-11-17T15:18:12.875Z] #36 DONE 0.3s
+[2026-11-17T15:18:12.875Z] 
+[2026-11-17T15:18:12.875Z] #37 [catalog-api runtime 5/6] COPY app ./app
+[2026-11-17T15:18:12.875Z] #37 DONE 0.0s
+[2026-11-17T15:18:12.875Z] 
+[2026-11-17T15:18:12.875Z] #35 [order-worker] exporting to image
+[2026-11-17T15:18:12.875Z] #35 unpacking to localhost:5000/order-worker:bfeb4f7 0.5s done
+[2026-11-17T15:18:13.126Z] #35 DONE 2.6s
+[2026-11-17T15:18:13.126Z] 
+[2026-11-17T15:18:13.126Z] #38 [order-worker] resolving provenance for metadata file
+[2026-11-17T15:18:13.126Z] #38 DONE 0.0s
+[2026-11-17T15:18:13.126Z] 
+[2026-11-17T15:18:13.126Z] #39 [catalog-api runtime 6/6] RUN apk upgrade --no-cache
+[2026-11-17T15:18:14.038Z] #39 1.020 (1/2) Upgrading krb5-libs (1.22.2-r1 -> 1.22.3-r0)
+[2026-11-17T15:18:14.038Z] #39 1.104 (2/2) Upgrading zlib (1.3.2-r1 -> 1.4-r0)
+[2026-11-17T15:18:14.038Z] #39 1.161 OK: 13.5 MiB in 38 packages
+[2026-11-17T15:18:14.289Z] #39 DONE 1.2s
+[2026-11-17T15:18:14.289Z] 
+[2026-11-17T15:18:14.289Z] #40 [catalog-api] exporting to image
+[2026-11-17T15:18:17.518Z] #40 exporting layers 3.2s done
+[2026-11-17T15:18:17.518Z] #40 exporting manifest sha256:ee9b92b67638632be5410bd5ce96cca2b676f6ac78e67ec00c9b2c0e2393b2d2 done
+[2026-11-17T15:18:17.518Z] #40 exporting config sha256:88dcf360dc9b77afd1cdfa7ca1deff8b4a45ef115611d2711018539002f2531c done
+[2026-11-17T15:18:17.518Z] #40 exporting attestation manifest sha256:ed417f33b4d93e11396217d841ca1b1dac2286b9520416eaf924e9befff07bd3 0.0s done
+[2026-11-17T15:18:17.518Z] #40 exporting manifest list sha256:d7aa8beb21f6bbd6dbfa988f338a392b3f76f7af1785eadb4a9dbf8d50b103d6 done
+[2026-11-17T15:18:17.518Z] #40 naming to localhost:5000/catalog-api:bfeb4f7 done
+[2026-11-17T15:18:17.518Z] #40 unpacking to localhost:5000/catalog-api:bfeb4f7
+[2026-11-17T15:18:18.430Z] #40 unpacking to localhost:5000/catalog-api:bfeb4f7 1.0s done
+[2026-11-17T15:18:18.430Z] #40 DONE 4.3s
+[2026-11-17T15:18:18.430Z] 
+[2026-11-17T15:18:18.430Z] #41 [catalog-api] resolving provenance for metadata file
+[2026-11-17T15:18:18.430Z] #41 DONE 0.0s
+[2026-11-17T15:18:18.430Z]  Image localhost:5000/web:bfeb4f7 Built 
+[2026-11-17T15:18:18.430Z]  Image localhost:5000/catalog-api:bfeb4f7 Built 
+[2026-11-17T15:18:18.430Z]  Image localhost:5000/order-worker:bfeb4f7 Built 
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Image scan)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] catchError
+[Pipeline] {
+[Pipeline] sh
+[2026-11-17T15:18:18.801Z] for s in catalog-api order-worker web; do echo "== $s:bfeb4f7"; \
+[2026-11-17T15:18:18.801Z]    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache/ aquasec/trivy:0.76.2 image --severity HIGH --ignore-unfixed --exit-code 0 --quiet localhost:5000/$s:bfeb4f7; \
+[2026-11-17T15:18:18.801Z]    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache/ aquasec/trivy:0.76.2 image --severity CRITICAL --ignore-unfixed --exit-code 1 --quiet localhost:5000/$s:bfeb4f7 || exit 1; \
+[2026-11-17T15:18:18.801Z]  done
+[2026-11-17T15:18:18.801Z] == catalog-api:bfeb4f7
+[2026-11-17T15:18:22.031Z] 
+[2026-11-17T15:18:22.031Z] Report Summary
+[2026-11-17T15:18:22.031Z] 
+[2026-11-17T15:18:22.031Z] ┌──────────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┬─────────┐
+[2026-11-17T15:18:22.031Z] │                                      Target                                      │    Type    │ Vulnerabilities │ Secrets │
+[2026-11-17T15:18:22.031Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.031Z] │ localhost:5000/catalog-api:bfeb4f7 (alpine 3.24.4)                               │   alpine   │        0        │    -    │
+[2026-11-17T15:18:22.031Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.033Z] │ opt/venv/lib/python3.12/site-packages/annotated_doc-0.0.6.dist-info/METADATA     │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.033Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.033Z] │ opt/venv/lib/python3.12/site-packages/annotated_types-0.8.0.dist-info/METADATA   │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.033Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.033Z] │ opt/venv/lib/python3.12/site-packages/anyio-4.16.0.dist-info/METADATA            │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.033Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.033Z] │ opt/venv/lib/python3.12/site-packages/click-8.5.1.dist-info/METADATA             │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/fastapi-0.163.1.dist-info/METADATA         │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/h11-0.16.0.dist-info/METADATA              │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/idna-3.20.dist-info/METADATA               │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/opentelemetry_api-1.45.2.dist-info/METADA- │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] │ TA                                                                               │            │                 │         │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA              │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/prometheus_client-0.26.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] │ TA                                                                               │            │                 │         │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/psycopg-3.3.9.dist-info/METADATA           │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/psycopg_binary-3.3.9.dist-info/METADATA    │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/psycopg_pool-3.3.3.dist-info/METADATA      │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/pydantic-2.14.3.dist-info/METADATA         │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/pydantic_core-2.50.4.dist-info/METADATA    │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/redis-8.1.0.dist-info/METADATA             │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/starlette-1.10.0.dist-info/METADATA        │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/typing_extensions-4.16.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] │ TA                                                                               │            │                 │         │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/typing_inspection-0.4.5.dist-info/METADATA │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ opt/venv/lib/python3.12/site-packages/uvicorn-0.54.0.dist-info/METADATA          │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.034Z] │ usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA             │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.034Z] └──────────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┴─────────┘
+[2026-11-17T15:18:22.034Z] Legend:
+[2026-11-17T15:18:22.034Z] - '-': Not scanned
+[2026-11-17T15:18:22.034Z] - '0': Clean (no security findings detected)
+[2026-11-17T15:18:22.034Z] 
+[2026-11-17T15:18:22.034Z] 
+[2026-11-17T15:18:22.034Z] Report Summary
+[2026-11-17T15:18:22.034Z] 
+[2026-11-17T15:18:22.034Z] ┌──────────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┬─────────┐
+[2026-11-17T15:18:22.034Z] │                                      Target                                      │    Type    │ Vulnerabilities │ Secrets │
+[2026-11-17T15:18:22.035Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.035Z] │ localhost:5000/catalog-api:bfeb4f7 (alpine 3.24.4)                               │   alpine   │        0        │    -    │
+[2026-11-17T15:18:22.035Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.035Z] │ opt/venv/lib/python3.12/site-packages/annotated_doc-0.0.6.dist-info/METADATA     │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.035Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.035Z] │ opt/venv/lib/python3.12/site-packages/annotated_types-0.8.0.dist-info/METADATA   │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.035Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.035Z] │ opt/venv/lib/python3.12/site-packages/anyio-4.16.0.dist-info/METADATA            │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.035Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.035Z] │ opt/venv/lib/python3.12/site-packages/click-8.5.1.dist-info/METADATA             │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.035Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.035Z] │ opt/venv/lib/python3.12/site-packages/fastapi-0.163.1.dist-info/METADATA         │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.035Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.035Z] │ opt/venv/lib/python3.12/site-packages/h11-0.16.0.dist-info/METADATA              │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.035Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.035Z] │ opt/venv/lib/python3.12/site-packages/idna-3.20.dist-info/METADATA               │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.035Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.035Z] │ opt/venv/lib/python3.12/site-packages/opentelemetry_api-1.45.2.dist-info/METADA- │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.035Z] │ TA                                                                               │            │                 │         │
+[2026-11-17T15:18:22.036Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.036Z] │ opt/venv/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA              │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.036Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.036Z] │ opt/venv/lib/python3.12/site-packages/prometheus_client-0.26.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.036Z] │ TA                                                                               │            │                 │         │
+[2026-11-17T15:18:22.036Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.036Z] │ opt/venv/lib/python3.12/site-packages/psycopg-3.3.9.dist-info/METADATA           │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.036Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.036Z] │ opt/venv/lib/python3.12/site-packages/psycopg_binary-3.3.9.dist-info/METADATA    │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.036Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.036Z] │ opt/venv/lib/python3.12/site-packages/psycopg_pool-3.3.3.dist-info/METADATA      │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.036Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.036Z] │ opt/venv/lib/python3.12/site-packages/pydantic-2.14.3.dist-info/METADATA         │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.036Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.036Z] │ opt/venv/lib/python3.12/site-packages/pydantic_core-2.50.4.dist-info/METADATA    │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.036Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.036Z] │ opt/venv/lib/python3.12/site-packages/redis-8.1.0.dist-info/METADATA             │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.036Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.036Z] │ opt/venv/lib/python3.12/site-packages/starlette-1.10.0.dist-info/METADATA        │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.036Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.036Z] │ opt/venv/lib/python3.12/site-packages/typing_extensions-4.16.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.036Z] │ TA                                                                               │            │                 │         │
+[2026-11-17T15:18:22.036Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.036Z] │ opt/venv/lib/python3.12/site-packages/typing_inspection-0.4.5.dist-info/METADATA │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.036Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.036Z] │ opt/venv/lib/python3.12/site-packages/uvicorn-0.54.0.dist-info/METADATA          │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.036Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:22.036Z] │ usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA             │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:22.036Z] └──────────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┴─────────┘
+[2026-11-17T15:18:22.036Z] Legend:
+[2026-11-17T15:18:22.036Z] - '-': Not scanned
+[2026-11-17T15:18:22.036Z] - '0': Clean (no security findings detected)
+[2026-11-17T15:18:22.036Z] 
+[2026-11-17T15:18:22.036Z] == order-worker:bfeb4f7
+[2026-11-17T15:18:24.524Z] 
+[2026-11-17T15:18:24.524Z] Report Summary
+[2026-11-17T15:18:24.524Z] 
+[2026-11-17T15:18:24.524Z] ┌──────────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┬─────────┐
+[2026-11-17T15:18:24.524Z] │                                      Target                                      │    Type    │ Vulnerabilities │ Secrets │
+[2026-11-17T15:18:24.524Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.524Z] │ localhost:5000/order-worker:bfeb4f7 (alpine 3.24.4)                              │   alpine   │        0        │    -    │
+[2026-11-17T15:18:24.524Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.524Z] │ opt/venv/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA              │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.524Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.524Z] │ opt/venv/lib/python3.12/site-packages/prometheus_client-0.26.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.524Z] │ TA                                                                               │            │                 │         │
+[2026-11-17T15:18:24.524Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.524Z] │ opt/venv/lib/python3.12/site-packages/psycopg-3.3.9.dist-info/METADATA           │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.524Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.524Z] │ opt/venv/lib/python3.12/site-packages/psycopg_binary-3.3.9.dist-info/METADATA    │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.524Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.524Z] │ opt/venv/lib/python3.12/site-packages/psycopg_pool-3.3.3.dist-info/METADATA      │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.524Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.524Z] │ opt/venv/lib/python3.12/site-packages/redis-8.1.0.dist-info/METADATA             │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.524Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.524Z] │ opt/venv/lib/python3.12/site-packages/typing_extensions-4.16.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.524Z] │ TA                                                                               │            │                 │         │
+[2026-11-17T15:18:24.524Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.524Z] │ usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA             │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.525Z] └──────────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┴─────────┘
+[2026-11-17T15:18:24.525Z] Legend:
+[2026-11-17T15:18:24.525Z] - '-': Not scanned
+[2026-11-17T15:18:24.525Z] - '0': Clean (no security findings detected)
+[2026-11-17T15:18:24.525Z] 
+[2026-11-17T15:18:24.775Z] 
+[2026-11-17T15:18:24.775Z] Report Summary
+[2026-11-17T15:18:24.775Z] 
+[2026-11-17T15:18:24.775Z] ┌──────────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┬─────────┐
+[2026-11-17T15:18:24.775Z] │                                      Target                                      │    Type    │ Vulnerabilities │ Secrets │
+[2026-11-17T15:18:24.775Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.775Z] │ localhost:5000/order-worker:bfeb4f7 (alpine 3.24.4)                              │   alpine   │        0        │    -    │
+[2026-11-17T15:18:24.775Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.775Z] │ opt/venv/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA              │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.776Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.776Z] │ opt/venv/lib/python3.12/site-packages/prometheus_client-0.26.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.776Z] │ TA                                                                               │            │                 │         │
+[2026-11-17T15:18:24.776Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.776Z] │ opt/venv/lib/python3.12/site-packages/psycopg-3.3.9.dist-info/METADATA           │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.776Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.776Z] │ opt/venv/lib/python3.12/site-packages/psycopg_binary-3.3.9.dist-info/METADATA    │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.776Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.776Z] │ opt/venv/lib/python3.12/site-packages/psycopg_pool-3.3.3.dist-info/METADATA      │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.776Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.776Z] │ opt/venv/lib/python3.12/site-packages/redis-8.1.0.dist-info/METADATA             │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.776Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.776Z] │ opt/venv/lib/python3.12/site-packages/typing_extensions-4.16.0.dist-info/METADA- │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.777Z] │ TA                                                                               │            │                 │         │
+[2026-11-17T15:18:24.777Z] ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:24.777Z] │ usr/local/lib/python3.12/site-packages/pip-25.0.1.dist-info/METADATA             │ python-pkg │        0        │    -    │
+[2026-11-17T15:18:24.777Z] └──────────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┴─────────┘
+[2026-11-17T15:18:24.777Z] Legend:
+[2026-11-17T15:18:24.777Z] - '-': Not scanned
+[2026-11-17T15:18:24.777Z] - '0': Clean (no security findings detected)
+[2026-11-17T15:18:24.777Z] 
+[2026-11-17T15:18:24.777Z] == web:bfeb4f7
+[2026-11-17T15:18:26.639Z] 
+[2026-11-17T15:18:26.639Z] Report Summary
+[2026-11-17T15:18:26.639Z] 
+[2026-11-17T15:18:26.640Z] ┌────────────────────────────────────────────┬────────┬─────────────────┬─────────┐
+[2026-11-17T15:18:26.640Z] │                   Target                   │  Type  │ Vulnerabilities │ Secrets │
+[2026-11-17T15:18:26.640Z] ├────────────────────────────────────────────┼────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:26.640Z] │ localhost:5000/web:bfeb4f7 (alpine 3.24.2) │ alpine │        0        │    -    │
+[2026-11-17T15:18:26.640Z] └────────────────────────────────────────────┴────────┴─────────────────┴─────────┘
+[2026-11-17T15:18:26.640Z] Legend:
+[2026-11-17T15:18:26.640Z] - '-': Not scanned
+[2026-11-17T15:18:26.640Z] - '0': Clean (no security findings detected)
+[2026-11-17T15:18:26.640Z] 
+[2026-11-17T15:18:26.890Z] 
+[2026-11-17T15:18:26.890Z] Report Summary
+[2026-11-17T15:18:26.890Z] 
+[2026-11-17T15:18:26.890Z] ┌────────────────────────────────────────────┬────────┬─────────────────┬─────────┐
+[2026-11-17T15:18:26.890Z] │                   Target                   │  Type  │ Vulnerabilities │ Secrets │
+[2026-11-17T15:18:26.890Z] ├────────────────────────────────────────────┼────────┼─────────────────┼─────────┤
+[2026-11-17T15:18:26.890Z] │ localhost:5000/web:bfeb4f7 (alpine 3.24.2) │ alpine │        0        │    -    │
+[2026-11-17T15:18:26.890Z] └────────────────────────────────────────────┴────────┴─────────────────┴─────────┘
+[2026-11-17T15:18:26.890Z] Legend:
+[2026-11-17T15:18:26.890Z] - '-': Not scanned
+[2026-11-17T15:18:26.890Z] - '0': Clean (no security findings detected)
+[2026-11-17T15:18:26.890Z] 
+[Pipeline] }
+[Pipeline] // catchError
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
+[2026-11-17T15:18:27.275Z] docker ps --filter publish=5000 -q | grep -q . || (docker rm -f registry 2>/dev/null; docker run -d --restart unless-stopped --name registry -p 127.0.0.1:5000:5000 registry:2.8.3)
+[2026-11-17T15:18:27.275Z] for s in catalog-api order-worker web; do docker push localhost:5000/$s:bfeb4f7 || exit 1; done
+[2026-11-17T15:18:27.275Z] The push refers to repository [localhost:5000/catalog-api]
+[2026-11-17T15:18:27.275Z] 881fc932939e: Layer already exists
+[2026-11-17T15:18:27.275Z] aa121b1b1cdb: Layer already exists
+[2026-11-17T15:18:27.275Z] dfad40f4f7cd: Pushed
+[2026-11-17T15:18:27.275Z] cc36311dc778: Layer already exists
+[2026-11-17T15:18:27.275Z] bc25908ccdd9: Pushed
+[2026-11-17T15:18:27.275Z] 4f4fb700ef54: Layer already exists
+[2026-11-17T15:18:27.275Z] e9947a9c1926: Pushed
+[2026-11-17T15:18:27.275Z] 113b91713f05: Layer already exists
+[2026-11-17T15:18:27.275Z] 882546295b1f: Pushed
+[2026-11-17T15:18:27.526Z] 295c40731727: Pushed
+[2026-11-17T15:18:27.526Z] bfeb4f7: digest: sha256:d7aa8beb21f6bbd6dbfa988f338a392b3f76f7af1785eadb4a9dbf8d50b103d6 size: 856
+[2026-11-17T15:18:27.526Z] The push refers to repository [localhost:5000/order-worker]
+[2026-11-17T15:18:27.526Z] 113b91713f05: Layer already exists
+[2026-11-17T15:18:27.526Z] 4f4fb700ef54: Layer already exists
+[2026-11-17T15:18:27.526Z] f75c2e9a693a: Pushed
+[2026-11-17T15:18:27.526Z] 881fc932939e: Layer already exists
+[2026-11-17T15:18:27.526Z] aa121b1b1cdb: Layer already exists
+[2026-11-17T15:18:27.526Z] 3e65397952b6: Pushed
+[2026-11-17T15:18:27.526Z] 937e35651524: Pushed
+[2026-11-17T15:18:27.526Z] cc36311dc778: Layer already exists
+[2026-11-17T15:18:27.526Z] 933c41810fcf: Pushed
+[2026-11-17T15:18:27.526Z] bc25908ccdd9: Mounted from catalog-api
+[2026-11-17T15:18:27.526Z] bfeb4f7: digest: sha256:f202d31954ef277ba004204e412cedd71ce8f54f49f9c1cc265235e2e4158a88 size: 856
+[2026-11-17T15:18:27.527Z] The push refers to repository [localhost:5000/web]
+[2026-11-17T15:18:27.779Z] ff3fbed5e913: Layer already exists
+[2026-11-17T15:18:27.779Z] 3f587be07a34: Pushed
+[2026-11-17T15:18:27.779Z] 3cbf0502908f: Layer already exists
+[2026-11-17T15:18:27.779Z] 511976c6ab3d: Layer already exists
+[2026-11-17T15:18:27.779Z] 0d6771acfac0: Pushed
+[2026-11-17T15:18:27.779Z] 7fa3ebf07aae: Pushed
+[2026-11-17T15:18:27.779Z] e2de96513ba9: Layer already exists
+[2026-11-17T15:18:27.779Z] 618365c07317: Layer already exists
+[2026-11-17T15:18:27.779Z] a13df183ba7f: Layer already exists
+[2026-11-17T15:18:27.779Z] a13b50162360: Layer already exists
+[2026-11-17T15:18:27.779Z] 0513567031b1: Layer already exists
+[2026-11-17T15:18:27.779Z] 911bd3a49d26: Layer already exists
+[2026-11-17T15:18:27.779Z] bfeb4f7: digest: sha256:6cd2266c8a9890c72bc3737b4d2005acec64e5618cffff3c51c0e09aa358bdda size: 856
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (GitOps)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
+[2026-11-17T15:18:28.190Z] sed -i 's/^tag: .*/tag: "bfeb4f7"/' /home/mist/Documents/Projects/sentinelShop-gitops/values-prod.yaml
+[2026-11-17T15:18:28.191Z] if [ -d /home/mist/Documents/Projects/sentinelShop-gitops/.git ]; then git -C /home/mist/Documents/Projects/sentinelShop-gitops diff --quiet || git -C /home/mist/Documents/Projects/sentinelShop-gitops -c user.name=sentinelshop-ci -c user.email=ci@localhost commit -q -am "chore: set production image tag to bfeb4f7"; fi
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] sh
+[2026-11-17T15:18:28.535Z] + mkdir -p reports
+[2026-11-17T15:18:28.535Z] + cp -r /home/mist/jenkins_home/workspace/sentinelshop@tmp/reports/. reports/
+[Pipeline] archiveArtifacts
+[2026-11-17T15:18:28.556Z] Archiving artifacts
+[Pipeline] echo
+[2026-11-17T15:18:28.578Z] Pipeline passed: images built, scanned, pushed and the tag recorded.
+[Pipeline] cleanWs
+[2026-11-17T15:18:28.594Z] [WS-CLEANUP] Deleting project workspace...
+[2026-11-17T15:18:28.594Z] [WS-CLEANUP] Deferred wipeout is used...
+[2026-11-17T15:18:28.596Z] [WS-CLEANUP] done
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // timestamps
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
