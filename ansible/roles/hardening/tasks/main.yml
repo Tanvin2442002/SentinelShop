@@ -1,0 +1,19 @@
+- name: Create ops group
+  ansible.builtin.group:
+    name: "{{ ops_group }}"
+
+- name: Create deploy user
+  ansible.builtin.user:
+    name: "{{ deploy_user }}"
+    groups: "{{ ops_group }}"
+    shell: /bin/bash
+    password_lock: true
+
+- name: Install deploy public key
+  ansible.posix.authorized_key:
+    user: "{{ deploy_user }}"
+    key: "{{ lookup('file', deploy_pubkey_file) }}"
+
+- ansible.builtin.import_tasks: ssh.yml
+- ansible.builtin.import_tasks: firewall.yml
+- ansible.builtin.import_tasks: logdir.yml

@@ -1,0 +1,42 @@
+--- sshd effective config
+permitrootlogin no
+passwordauthentication no
+kbdinteractiveauthentication no
+allowgroups ops
+--- root login (expect refused)
+root@127.0.0.1: Permission denied (publickey).
+exit=255
+--- password login (expect refused)
+deploy@127.0.0.1: Permission denied (publickey).
+exit=255
+--- key login as deploy (expect success)
+uid=1001(deploy) gid=1002(deploy) groups=1002(deploy),1001(ops)
+e4e500d54d65
+exit=0
+--- ufw
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), deny (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+22/tcp                     ALLOW IN    Anywhere                  
+80/tcp                     ALLOW IN    Anywhere                  
+443/tcp                    ALLOW IN    Anywhere                  
+22/tcp (v6)                ALLOW IN    Anywhere (v6)             
+80/tcp (v6)                ALLOW IN    Anywhere (v6)             
+443/tcp (v6)               ALLOW IN    Anywhere (v6)             
+
+--- log dir
+drwxr-x---+ 2 root root 4096 Nov 17 09:13 /var/log/shop
+# file: var/log/shop
+# owner: root
+# group: root
+user::rwx
+group::r-x
+group:ops:r-x
+mask::r-x
+other::---
+
+getfacl: Removing leading '/' from absolute path names

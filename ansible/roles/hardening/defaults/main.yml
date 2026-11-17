@@ -1,0 +1,5 @@
+deploy_user: deploy
+ops_group: ops
+deploy_pubkey_file: "{{ lookup('env', 'HOME') }}/.ssh/shop_deploy.pub"
+ufw_allowed_ports: [22, 80, 443]
+log_dir: /var/log/shop
