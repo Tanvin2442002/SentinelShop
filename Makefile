@@ -131,9 +131,14 @@ k3d-secret:
 > kubectl create namespace shop --dry-run=client -o yaml | kubectl apply -f -
 > kubectl -n shop get secret shop-secrets >/dev/null 2>&1 || { pw=$$(openssl rand -hex 16); kubectl -n shop create secret generic shop-secrets --from-literal=POSTGRES_PASSWORD=$$pw --from-literal=DATABASE_URL=postgresql://shop:$$pw@postgres:5432/shop --from-literal=SECRET_KEY=$$(openssl rand -hex 32); }
 
-deploy: k3d-secret
+deploy: k3d-secret k3d-images
 > helm upgrade --install shop helm/shop -n shop $(HELM_VALUES) $(HELM_EXTRA) --wait --wait-for-jobs --timeout 5m
 
+.PHONY: k3d-images
+k3d-images: env
+> TAG=dev $(COMPOSE) build
+> for s in $(SERVICES); do docker push $(REGISTRY)/$$s:dev || exit 1; done
+> for i in postgres:16.16-alpine redis:7.4.11-alpine; do docker pull $$i && docker tag $$i $(REGISTRY)/$$i && docker push $(REGISTRY)/$$i || exit 1; done
 
 .PHONY: k3d-smoke
 

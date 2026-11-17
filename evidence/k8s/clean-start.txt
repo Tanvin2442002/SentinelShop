@@ -1,0 +1,332 @@
+k3d registry list | grep -q k3d-shop-registry || k3d registry create shop-registry --port 127.0.0.1:5000
+INFO[0000] Creating node 'k3d-shop-registry'            
+INFO[0000] Successfully created registry 'k3d-shop-registry' 
+INFO[0000] Starting node 'k3d-shop-registry'            
+INFO[0000] Successfully created registry 'k3d-shop-registry' 
+# You can now use the registry like this (example):
+# 1. create a new cluster that uses this registry
+k3d cluster create --registry-use k3d-shop-registry:5000
+
+# 2. tag an existing local image to be pushed to the registry
+docker tag nginx:latest k3d-shop-registry:5000/mynginx:v0.1
+
+# 3. push that image to the registry
+docker push k3d-shop-registry:5000/mynginx:v0.1
+
+# 4. run a pod that uses this image
+kubectl run mynginx --image k3d-shop-registry:5000/mynginx:v0.1
+
+k3d cluster list | grep -q '^shop ' || k3d cluster create shop --servers 1 --agents 2 --registry-use k3d-shop-registry:5000 -p "127.0.0.1:8088:80@loadbalancer" --wait
+INFO[0000] portmapping '127.0.0.1:8088:80' targets the loadbalancer: defaulting to [servers:*:proxy agents:*:proxy] 
+INFO[0000] Prep: Network                                
+INFO[0000] Re-using existing network 'k3d-shop' (93916331aec4e13ff900a8414abbe8f8af119c7801030c50e9c5b1c838b22039) 
+INFO[0000] Created image volume k3d-shop-images         
+INFO[0000] Starting new tools node...                   
+INFO[0000] Starting node 'k3d-shop-tools'               
+INFO[0001] Creating node 'k3d-shop-server-0'            
+INFO[0001] Creating node 'k3d-shop-agent-0'             
+INFO[0001] Creating node 'k3d-shop-agent-1'             
+INFO[0001] Creating LoadBalancer 'k3d-shop-serverlb'    
+INFO[0001] Using the k3d-tools node to gather environment information 
+INFO[0001] HostIP: using network gateway 172.18.0.1 address 
+INFO[0001] Starting cluster 'shop'                      
+INFO[0001] Starting servers...                          
+INFO[0001] Starting node 'k3d-shop-server-0'            
+INFO[0007] Starting agents...                           
+INFO[0007] Starting node 'k3d-shop-agent-0'             
+INFO[0007] Starting node 'k3d-shop-agent-1'             
+INFO[0019] Starting helpers...                          
+INFO[0020] Starting node 'k3d-shop-serverlb'            
+INFO[0026] Injecting records for hostAliases (incl. host.k3d.internal) and for 5 network members into CoreDNS configmap... 
+INFO[0029] Cluster 'shop' created successfully!         
+INFO[0029] You can now use it like this:                
+kubectl cluster-info
+for i in $(seq 1 60); do kubectl get crd middlewares.traefik.io >/dev/null 2>&1 && break; sleep 3; done
+kubectl wait --for=condition=Established crd/middlewares.traefik.io --timeout=60s
+customresourcedefinition.apiextensions.k8s.io/middlewares.traefik.io condition met
+for i in $(seq 1 60); do kubectl -n kube-system get deploy traefik >/dev/null 2>&1 && break; sleep 3; done
+kubectl -n kube-system rollout status deploy/traefik --timeout=180s
+Waiting for deployment "traefik" rollout to finish: 0 of 1 updated replicas are available...
+deployment "traefik" successfully rolled out
+kubectl create namespace shop --dry-run=client -o yaml | kubectl apply -f -
+namespace/shop created
+kubectl -n shop get secret shop-secrets >/dev/null 2>&1 || { pw=$(openssl rand -hex 16); kubectl -n shop create secret generic shop-secrets --from-literal=POSTGRES_PASSWORD=$pw --from-literal=DATABASE_URL=postgresql://shop:$pw@postgres:5432/shop --from-literal=SECRET_KEY=$(openssl rand -hex 32); }
+secret/shop-secrets created
+test -f .env || (cp .env.example .env \
+   && sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$(openssl rand -hex 16)/; s/^SECRET_KEY=.*/SECRET_KEY=$(openssl rand -hex 32)/; s/^GRAFANA_ADMIN_PASSWORD=.*/GRAFANA_ADMIN_PASSWORD=$(openssl rand -hex 12)/" .env \
+   && echo "created .env with generated secrets")
+TAG=dev docker compose build
+ Image localhost:5000/catalog-api:dev Building 
+ Image localhost:5000/order-worker:dev Building 
+ Image localhost:5000/web:dev Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.63kB done
+#1 DONE 0.0s
+
+#2 [web internal] load build definition from Dockerfile
+#2 transferring dockerfile: 463B done
+#2 DONE 0.0s
+
+#3 [catalog-api internal] load build definition from Dockerfile
+#3 transferring dockerfile: 860B done
+#3 DONE 0.0s
+
+#4 [order-worker internal] load build definition from Dockerfile
+#4 transferring dockerfile: 806B done
+#4 DONE 0.0s
+
+#5 [order-worker] resolve image config for docker-image://docker.io/docker/dockerfile:1
+#5 DONE 1.4s
+
+#6 [catalog-api] docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#6 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e 0.0s done
+#6 CACHED
+
+#7 [order-worker internal] load metadata for docker.io/library/python:3.12-alpine
+#7 ...
+
+#8 [web internal] load metadata for docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine
+#8 DONE 1.3s
+
+#7 [order-worker internal] load metadata for docker.io/library/python:3.12-alpine
+#7 DONE 1.3s
+
+#9 [web internal] load .dockerignore
+#9 transferring context: 82B done
+#9 DONE 0.0s
+
+#10 [catalog-api internal] load .dockerignore
+#10 transferring context: 136B done
+#10 DONE 0.0s
+
+#11 [order-worker internal] load .dockerignore
+#11 transferring context: 136B done
+#11 DONE 0.0s
+
+#12 [web builder 1/5] FROM docker.io/library/python:3.12-alpine@sha256:c5ba3deef00c7758561a0f03c26f44f10589263d40e732b8748e0d1f38f6dd89
+#12 resolve docker.io/library/python:3.12-alpine@sha256:c5ba3deef00c7758561a0f03c26f44f10589263d40e732b8748e0d1f38f6dd89 0.0s done
+#12 DONE 0.0s
+
+#13 [web runtime 1/3] FROM docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine@sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03
+#13 resolve docker.io/nginxinc/nginx-unprivileged:1.30.6-alpine@sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03 0.0s done
+#13 DONE 0.0s
+
+#14 [order-worker internal] load build context
+#14 transferring context: 16.82kB done
+#14 DONE 0.0s
+
+#15 [web internal] load build context
+#15 transferring context: 36.25kB done
+#15 DONE 0.0s
+
+#16 [catalog-api internal] load build context
+#16 transferring context: 24.97kB done
+#16 DONE 0.0s
+
+#17 [web assets 3/4] COPY public/ ./
+#17 CACHED
+
+#18 [web runtime 2/3] RUN apk upgrade --no-cache
+#18 CACHED
+
+#19 [web assets 2/4] WORKDIR /site
+#19 CACHED
+
+#20 [web assets 4/4] RUN find . -name '*.map' -delete
+#20 CACHED
+
+#21 [web runtime 3/3] COPY --from=assets /site /usr/share/nginx/html
+#21 CACHED
+
+#22 [order-worker runtime 5/6] COPY worker ./worker
+#22 CACHED
+
+#23 [order-worker builder 4/5] COPY requirements.txt .
+#23 CACHED
+
+#24 [order-worker runtime 4/6] COPY --from=builder /opt/venv /opt/venv
+#24 CACHED
+
+#25 [order-worker builder 5/5] RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+#25 CACHED
+
+#26 [catalog-api builder 4/5] COPY requirements.txt .
+#26 CACHED
+
+#27 [catalog-api builder 2/5] WORKDIR /build
+#27 CACHED
+
+#28 [catalog-api builder 5/5] RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+#28 CACHED
+
+#29 [catalog-api runtime 4/6] COPY --from=builder /opt/venv /opt/venv
+#29 CACHED
+
+#30 [catalog-api builder 3/5] RUN python -m venv /opt/venv
+#30 CACHED
+
+#31 [catalog-api runtime 5/6] COPY app ./app
+#31 CACHED
+
+#32 [catalog-api runtime 2/6] RUN addgroup -S -g 10001 app  && adduser -S -u 10001 -G app -H -s /sbin/nologin app
+#32 CACHED
+
+#33 [catalog-api runtime 3/6] WORKDIR /srv
+#33 CACHED
+
+#34 [catalog-api runtime 6/6] RUN apk upgrade --no-cache
+#34 CACHED
+
+#35 [order-worker runtime 6/6] RUN apk upgrade --no-cache
+#35 CACHED
+
+#36 [catalog-api] exporting to image
+#36 exporting layers done
+#36 exporting manifest sha256:5f2d819aef7da4541d5632b087e87a2bc8c57c990b28b43e81794fd3dc6815bf done
+#36 exporting config sha256:be254a6c528acd2238ab1078971f28ed1b85730cf0229f3a499c5a056e8d400b done
+#36 exporting attestation manifest sha256:76f4a2550b857c6c32a00ab4130f288f6bbbc26ded013ea2e2a3b29721b0dc71 0.0s done
+#36 exporting manifest list sha256:f36275edbe3cb70264b197f9591ff1a8af29925d38b605f6c3bdf0e1f40317c7 done
+#36 naming to localhost:5000/catalog-api:dev done
+#36 unpacking to localhost:5000/catalog-api:dev 0.0s done
+#36 DONE 0.1s
+
+#37 [web] exporting to image
+#37 exporting layers done
+#37 exporting manifest sha256:fafd6af48dbf812d49e4b17bbfd333efb7349a6e897054879032bab3d70d3365 done
+#37 exporting config sha256:9d94b7b3cb1e635e0d4c75d19b4cf7f7b8cc2881dff7ad925f4b67c12e42693d done
+#37 exporting attestation manifest sha256:b5e527e5eacbd592288549d7b02dfba2aff20f668eec96ad262b698a76792e81 0.0s done
+#37 exporting manifest list sha256:a0eac446d0c61289c7a0fe28194e6c4dc820d5e92308973303dbfa70e65c0714 done
+#37 naming to localhost:5000/web:dev done
+#37 unpacking to localhost:5000/web:dev 0.0s done
+#37 DONE 0.1s
+
+#38 [order-worker] exporting to image
+#38 exporting layers done
+#38 exporting manifest sha256:4b95fa613067800e453a101af3cf8dafa3d64b2248cafcfecd9a254221f9bc06 done
+#38 exporting config sha256:4ec2ce5a00c459e3d6a55700d9b65509986538ecf344ab598f80ae9301afc974 done
+#38 exporting attestation manifest sha256:749be29688ad1751a65b31ddb9a4a5fc51f26ba7c92547f75b06dd86410f1451 done
+#38 exporting manifest list sha256:09d0a4830fd3cc00e895b88d66ebbbdc182954ca65560e46ae7131ee5e3e71ca done
+#38 naming to localhost:5000/order-worker:dev done
+#38 unpacking to localhost:5000/order-worker:dev done
+#38 DONE 0.1s
+
+#39 [web] resolving provenance for metadata file
+#39 DONE 0.0s
+
+#40 [order-worker] resolving provenance for metadata file
+#40 DONE 0.0s
+
+#41 [catalog-api] resolving provenance for metadata file
+#41 DONE 0.0s
+ Image localhost:5000/order-worker:dev Built 
+ Image localhost:5000/web:dev Built 
+ Image localhost:5000/catalog-api:dev Built 
+for s in catalog-api order-worker web; do docker push localhost:5000/$s:dev || exit 1; done
+The push refers to repository [localhost:5000/catalog-api]
+c312d7b07de4: Pushed
+cc36311dc778: Pushed
+881fc932939e: Pushed
+206cf5361983: Pushed
+86ac167ac544: Pushed
+4f4fb700ef54: Pushed
+e291f239c396: Pushed
+aa121b1b1cdb: Pushed
+113b91713f05: Pushed
+1d75da690b5b: Pushed
+dev: digest: sha256:f36275edbe3cb70264b197f9591ff1a8af29925d38b605f6c3bdf0e1f40317c7 size: 856
+The push refers to repository [localhost:5000/order-worker]
+881fc932939e: Pushed
+db069cc186af: Pushed
+cc36311dc778: Mounted from catalog-api
+fcc2399e4089: Pushed
+113b91713f05: Mounted from catalog-api
+aafc754b5e55: Pushed
+e291f239c396: Mounted from catalog-api
+4f4fb700ef54: Pushed
+c60604a4ec6d: Pushed
+aa121b1b1cdb: Mounted from catalog-api
+dev: digest: sha256:09d0a4830fd3cc00e895b88d66ebbbdc182954ca65560e46ae7131ee5e3e71ca size: 856
+The push refers to repository [localhost:5000/web]
+618365c07317: Pushed
+3cbf0502908f: Pushed
+e2de96513ba9: Pushed
+f0880c687759: Pushed
+0513567031b1: Pushed
+911bd3a49d26: Pushed
+a13df183ba7f: Pushed
+511976c6ab3d: Pushed
+a13b50162360: Pushed
+5644eac525c1: Pushed
+2dceb316a0af: Pushed
+ff3fbed5e913: Pushed
+dev: digest: sha256:a0eac446d0c61289c7a0fe28194e6c4dc820d5e92308973303dbfa70e65c0714 size: 856
+for i in postgres:16.16-alpine redis:7.4.11-alpine; do docker pull $i && docker tag $i localhost:5000/$i && docker push localhost:5000/$i || exit 1; done
+16.16-alpine: Pulling from library/postgres
+Digest: sha256:81e77a4833487b8132fe4b00bedd39dc3f74b8641e387f19312a48f7de218c2e
+Status: Image is up to date for postgres:16.16-alpine
+docker.io/library/postgres:16.16-alpine
+The push refers to repository [localhost:5000/postgres]
+5959c7ea857a: Pushed
+881fc932939e: Mounted from order-worker
+41713cbe7496: Pushed
+6bceb0db2fd1: Pushed
+86cc7190d1c0: Pushed
+5788ee6f91dc: Pushed
+b7106f8586ee: Unavailable
+f997efa53d88: Pushed
+b7106f8586ee: Pushed
+f85a33377d83: Pushed
+ea98517a315c: Pushed
+a2d17f5b24d5: Pushed
+16.16-alpine: digest: sha256:a2f7e20374cd8fd8ed4a588b79549e10589bea7b1686e77922f5ac741b80b8a1 size: 3054
+
+ Info -> Not all multiplatform-content is present and only the available single-platform image was pushed
+         sha256:81e77a4833487b8132fe4b00bedd39dc3f74b8641e387f19312a48f7de218c2e -> sha256:a2f7e20374cd8fd8ed4a588b79549e10589bea7b1686e77922f5ac741b80b8a1
+7.4.11-alpine: Pulling from library/redis
+Digest: sha256:d9436322172a5b482c187bf1f363d3c4fea086fcca6b9c8a94de8f0f39ed3193
+Status: Image is up to date for redis:7.4.11-alpine
+docker.io/library/redis:7.4.11-alpine
+The push refers to repository [localhost:5000/redis]
+766c91354b27: Pushed
+8bfa4f5e3c40: Pushed
+964ae3503686: Pushed
+6577e1d2b27e: Pushed
+4f4fb700ef54: Mounted from order-worker
+759efa4719c9: Pushed
+5e61c876e615: Pushed
+7.4.11-alpine: digest: sha256:8be847644e195abc4c10c8d9936cfa45332eccc6b714fa7b186ff43f1f4d5579 size: 2288
+
+ Info -> Not all multiplatform-content is present and only the available single-platform image was pushed
+         sha256:d9436322172a5b482c187bf1f363d3c4fea086fcca6b9c8a94de8f0f39ed3193 -> sha256:8be847644e195abc4c10c8d9936cfa45332eccc6b714fa7b186ff43f1f4d5579
+helm upgrade --install shop helm/shop -n shop -f helm/shop/values-dev.yaml  --wait --wait-for-jobs --timeout 5m
+Release "shop" does not exist. Installing it now.
+NAME: shop
+LAST DEPLOYED: Tue Nov 17 22:23:04 2026
+NAMESPACE: shop
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+bash scripts/k3d-smoke.sh
+ok:   ingress reachable at http://127.0.0.1:8088 and catalog-api ready
+ok:   web page served
+ok:   12 products listed
+ok:   wrong password rejected with 401
+ok:   metrics endpoint is not exposed
+ok:   order 1 placed through the ingress and processed by the worker
+k3d smoke test passed
+bash scripts/netpol-proof.sh
+ok:   order-worker -> postgres:5432 OPEN
+ok:   order-worker -> redis:6379 OPEN
+ok:   seed -> postgres:5432 OPEN
+ok:   seed -> redis:6379 BLOCKED
+ok:   intruder -> postgres:5432 BLOCKED
+ok:   intruder -> redis:6379 BLOCKED
+
+app still works through the ingress:
+ok:   ingress reachable at http://127.0.0.1:8088 and catalog-api ready
+ok:   web page served
+ok:   12 products listed
+ok:   wrong password rejected with 401
+ok:   metrics endpoint is not exposed
+ok:   order 2 placed through the ingress and processed by the worker
+k3d smoke test passed
