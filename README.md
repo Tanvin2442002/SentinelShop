@@ -38,7 +38,7 @@ Needs: Docker Engine with Compose v2, make, git, openssl. Optional: pre-commit.
 | detection/ | Wazuh rules (detection/wazuh/local_rules.xml), attacker, responder |
 | chaos/ | runtime fault flags for the drill |
 | evidence/ | proof for each task |
-| docs/ | architecture diagram, RCA, spec |
+| docs/ | architecture diagram and RCA |
 
 ## Task 1: the app and its containers
 
