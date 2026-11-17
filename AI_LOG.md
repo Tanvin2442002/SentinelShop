@@ -1,0 +1,31 @@
+# AI log
+
+Claude Code wrote the application code (API, worker, web page, tests). It was not used for the infrastructure side. Each entry says what I asked, what came back, what I changed and how I checked.
+
+## How I worked
+
+I set the rules before it started. The API contracts in `contracts/` were frozen and it had to match them exactly. It was told which files it must never touch (Dockerfiles, compose files, Makefile, pipeline, monitoring, detection, Kubernetes, Terraform, Ansible, README and this log). It worked one step per session, and each step ended with a short report: files changed, test results, contract lines checked and what was not verified. It committed only when the tests passed. When something conflicted with a contract it did not change it. It wrote a proposal in `docs/CONTRACT-CHANGES.md` for me to decide.
+
+## 1. API and its tests
+
+Asked for the catalog API in steps: skeleton with env config, JSON logs, products and metrics (`2752319`), then orders, login, search and readyz (`5e24eb0`), then tests for those including parameterised SQL (`31b0b7d`). I accepted the structure. I checked it with the unit tests, then with the smoke test against the running stack.
+
+## 2. Small fixes found after the first versions
+
+The first versions needed three fixes. The Redis client had no timeouts, so with Redis down a request would hang, while the contract says 503 and a live process. I had it set 2 second connect and socket timeouts (`0c621a5`). An invalid `LOG_LEVEL` is now rejected at startup (`751f61d`). The bcrypt cost for the demo users was raised to 10 (`450d991`).
+
+## 3. Order worker
+
+Asked for a worker that takes orders off the Redis queue and survives a normal stop (`b32e524`). It handles SIGTERM, so a stopped worker finishes the order it holds. I accepted it. One limit remains and is in the README: a worker killed with SIGKILL or out of memory loses the one order it was processing.
+
+## 4. Login timing leak
+
+During its verification step, Claude Code found that a login for an unknown username returns faster than a wrong password for a real user, because bcrypt only runs when a row matches. That lets someone find valid usernames. The contract pins the query, so it did not change the code. It wrote a proposal with three options in `docs/CONTRACT-CHANGES.md`. I decided to accept the risk and document it, since brute force on login is detected and blocked at the edge and the users are demo accounts.
+
+## 5. Web page redesign
+
+Asked for a better-looking shop page with product cards, an orders panel, a login view and friendly error messages (`dcdf577`). I accepted the layout. The Order button came out squashed, which was fixed. The commit also carried an AI co-author line that I removed before merging. I checked it with the tests, the real stack and the browser.
+
+## 6. Chaos fault flags
+
+Asked for four fault flags (latency, error rate, slow database writes, memory leak) read only from a runtime file (`ed33257`, `1408f6c`). My first prompt also asked for a startup log line listing the active flags. That would have shown the fault in the logs and spoiled the blind drill, so I removed that request before it was built.
