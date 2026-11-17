@@ -37,6 +37,8 @@ pipeline {
                 stage('Dockerfile lint') { steps { script { softCheck('lint', 'lint') } } }
                 stage('SAST')            { steps { script { softCheck('sast', 'sast') } } }
                 stage('Config scan')     { steps { script { softCheck('config-scan', 'scan-config') } } }
+                stage('Helm lint')       { steps { script { softCheck('helm-lint', 'helm-lint') } } }
+                stage('K8s scan')        { steps { script { softCheck('k8s-scan', 'k8s-scan') } } }
             }
         }
         stage('Prepare') { steps { sh 'make env' } }
