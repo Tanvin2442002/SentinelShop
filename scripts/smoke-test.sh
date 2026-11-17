@@ -20,7 +20,8 @@ code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE/")
 [ "$code" = 200 ] || fail "web page returned $code, expected 200"
 pass "web page served"
 
-count=$(curl -fs "$BASE/api/products" | grep -o '"id"' | wc -l)
+products=$(curl -fs "$BASE/api/products") || fail "GET /api/products failed"
+count=$(printf '%s' "$products" | grep -o '"id"' | wc -l || true)
 [ "$count" -eq 12 ] || fail "expected 12 products, got $count"
 pass "12 products listed"
 
