@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-worker
+  labels:
+    app: order-worker
+    {{- include "shop.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: order-worker
+  template:
+    metadata:
+      labels:
+        app: order-worker
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: {{ .Values.orderWorker.terminationGracePeriodSeconds }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: order-worker
+          image: {{ .Values.registry }}/order-worker:{{ .Values.tag }}
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          ports:
+            - containerPort: 9100
+          envFrom:
+            - configMapRef:
+                name: shop-config
+          env:
+            - name: LOG_FILE
+              value: /var/log/shop/worker.json
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: {{ .Values.secretName }}, key: DATABASE_URL}
+          readinessProbe:
+            httpGet: {path: /metrics, port: 9100}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /metrics, port: 9100}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.orderWorker.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - {name: tmp, mountPath: /tmp}
+            - {name: logs, mountPath: /var/log/shop}
+      volumes:
+        - {name: tmp, emptyDir: {}}
+        - {name: logs, emptyDir: {}}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: order-worker
+  labels:
+    app: order-worker
+    {{- include "shop.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: order-worker
+  minReplicas: {{ .Values.orderWorker.hpa.min }}
+  maxReplicas: {{ .Values.orderWorker.hpa.max }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.orderWorker.hpa.cpu }}
