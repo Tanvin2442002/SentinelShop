@@ -220,11 +220,11 @@ ansible-idempotence:
 > @cd ansible && out=$$(ANSIBLE_NOCOLOR=1 ansible-playbook site.yml 2>&1); echo "$$out" | tail -3; echo "$$out" | grep -q "changed=0 " || { echo "not idempotent"; exit 1; }
 
 JENKINS_HOME   ?= $(HOME)/jenkins_home
-JENKINS_GITOPS ?= $(HOME)/Documents/Projects/sentinelShop-gitops
 
 .PHONY: jenkins-up
 jenkins-up:
 > docker build -q -t sentinelshop-jenkins:2.580.2 ci/jenkins >/dev/null
-> mkdir -p $(JENKINS_HOME) $(JENKINS_GITOPS)
+> mkdir -p $(JENKINS_HOME)
+> test -d $(JENKINS_HOME)/gitops-repo/.git || (mkdir -p $(JENKINS_HOME)/gitops-repo && cp gitops/values-prod.yaml $(JENKINS_HOME)/gitops-repo/ && git -C $(JENKINS_HOME)/gitops-repo init -q -b main && git -C $(JENKINS_HOME)/gitops-repo add . && git -C $(JENKINS_HOME)/gitops-repo -c user.name=sentinelshop-ci -c user.email=ci@localhost commit -q -m 'chore: initial production values')
 > docker rm -f jenkins >/dev/null 2>&1 || true
-> docker run -d --name jenkins --restart unless-stopped -p 127.0.0.1:8081:8080 -e JENKINS_HOME=$(JENKINS_HOME) -v $(JENKINS_HOME):$(JENKINS_HOME) -v $(JENKINS_GITOPS):$(JENKINS_GITOPS) -v /var/run/docker.sock:/var/run/docker.sock --group-add $$(stat -c %g /var/run/docker.sock) sentinelshop-jenkins:2.580.2
+> docker run -d --name jenkins --restart unless-stopped -p 127.0.0.1:8081:8080 -e JENKINS_HOME=$(JENKINS_HOME) -v $(JENKINS_HOME):$(JENKINS_HOME) -v /var/run/docker.sock:/var/run/docker.sock --group-add $$(stat -c %g /var/run/docker.sock) sentinelshop-jenkins:2.580.2

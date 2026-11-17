@@ -23,7 +23,7 @@ pipeline {
     }
     environment {
         REGISTRY   = 'localhost:5000'
-        GITOPS_DIR = '/home/mist/Documents/Projects/sentinelShop-gitops'
+        GITOPS_DIR = "${env.JENKINS_HOME}/gitops-repo"
     }
     stages {
         stage('Info') {

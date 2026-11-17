@@ -146,7 +146,7 @@ The path of one request: the edge writes a JSON access log, Wazuh reads it and a
 - Prometheus keeps two days of metrics and Loki has no retention limit.
 - `HighLatency` is loaded and validated but has not been fired in a test.
 - `make secrets` scans the history of the current branch only. The branch `demo/insecure` holds its planted fake secret on purpose.
-- The Jenkinsfile points `GITOPS_DIR` at a path on this machine. The gitops repo is a second git repo, and `gitops/` here is a snapshot of it.
+- The gitops repo is a local git repo that `make jenkins-up` creates inside Jenkins' home from the snapshot in `gitops/`. The pipeline commits the image tag there. It is not on GitHub, and `gitops/` in this repo is only the starting copy.
 - The container-based Ansible target has the limits listed under Task 4.
 
 ## What was cut and why
