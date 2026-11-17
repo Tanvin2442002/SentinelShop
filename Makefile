@@ -65,7 +65,7 @@ TAG      ?= $(shell git rev-parse --short HEAD)
 .PHONY: registry build scan-images push
 
 registry:
-> docker inspect -f '{{.State.Running}}' registry 2>/dev/null | grep -q true || (docker rm -f registry 2>/dev/null; docker run -d --restart unless-stopped --name registry -p 127.0.0.1:5000:5000 registry:2.8.3)
+> curl -sf localhost:5000/v2/ >/dev/null || (docker rm -f registry 2>/dev/null; docker run -d --restart unless-stopped --name registry -p 127.0.0.1:5000:5000 registry:2.8.3)
 
 build:
 > TAG=$(TAG) $(COMPOSE) build --pull --no-cache
@@ -111,3 +111,13 @@ normal-load:
 
 det-evidence:
 > bash scripts/detection-evidence.sh
+
+.PHONY: k3d-up k3d-down
+
+k3d-up:
+> @if [ -n "$$(docker ps -q --filter label=com.docker.compose.project=sentinelshop)" ]; then echo "compose is up: run make down first"; exit 1; fi
+> k3d registry list | grep -q k3d-shop-registry || k3d registry create shop-registry --port 127.0.0.1:5000
+> k3d cluster list | grep -q '^shop ' || k3d cluster create shop --servers 1 --agents 2 --registry-use k3d-shop-registry:5000 -p "127.0.0.1:8088:80@loadbalancer" --wait
+
+k3d-down:
+> k3d cluster delete shop
