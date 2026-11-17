@@ -15,6 +15,14 @@ Needs: Docker Engine with Compose v2, make, git, openssl. Optional: pre-commit.
 - `make clean` removes all containers and volumes. `make down` keeps the data.
 - On a fresh clone, run `pre-commit install` to enable the secret-scanning hook.
 
+### If the edge port is busy
+
+`make up` fails with "port is already allocated" or "address already in use" when another program holds the edge port.
+
+1. See what holds it: `ss -ltnp | grep ':8080'`
+2. Either stop that program, or choose another port. Set `EDGE_PORT=8088` in `.env` (any free port above 1024), then run `make up && make smoke`. The smoke test reads the port from `.env`, so nothing else changes.
+3. The shop only listens on 127.0.0.1, so it is not reachable from other machines.
+
 ## Layout
 
 | Path | What it holds |
