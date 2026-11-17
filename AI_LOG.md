@@ -2,6 +2,20 @@
 
 Claude Code wrote the application code (API, worker, web page, tests). It was not used for the infrastructure side. Each entry says what I asked, what came back, what I changed and how I checked.
 
+## My setup
+
+I used Claude Code for the application code only. I also used a separate chat assistant to learn DevSecOps concepts, and it did not write any of the infrastructure files.
+
+I set up Claude Code before it wrote anything. These files are local working files and are not in the repo, so `contracts/`, `docs/` and `.claude/` paths mentioned in this log are not in the repository. I can show them in the live review.
+
+- **Project rules.** A `CLAUDE.md` file held the rules every session started from: the contracts are frozen, the infrastructure files are off limits, and work is done in small steps with a report at the end.
+- **Two sub-agents.** `app-builder` wrote the code. `verifier` reviewed it and did not write code. Splitting the roles stopped the agent that wrote the code from marking its own work as correct.
+- **Two commands.** `task-start` loaded the rules and contracts before a step. `verify` ran the checks after it, so the checks were the same each time.
+- **Permissions.** `.claude/settings.json` limited what the agent could run and edit.
+- **Contracts.** Written agreements on ports, API shapes, log fields, metric names, detection and chaos behaviour. I wrote them before the code existed so the application matched the infrastructure I was building in parallel. The agent had to follow them, and if one was wrong it proposed a change and I decided.
+
+The verifier's report was never proof by itself. I trusted the unit tests, the smoke test on the running stack, the CI pipeline and the scans.
+
 ## How I worked
 
 I set the rules before it started. The API contracts in `contracts/` were frozen and it had to match them exactly. It was told which files it must never touch (Dockerfiles, compose files, Makefile, pipeline, monitoring, detection, Kubernetes, Terraform, Ansible, README and this log). It worked one step per session, and each step ended with a short report: files changed, test results, contract lines checked and what was not verified. It committed only when the tests passed. When something conflicted with a contract it did not change it. It wrote a proposal in `docs/CONTRACT-CHANGES.md` for me to decide.
