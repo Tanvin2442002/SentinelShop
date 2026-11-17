@@ -190,6 +190,7 @@ tf-validate:
 tf-plan:
 > cd terraform && terraform init -input=false >/dev/null && terraform plan -no-color
 tf-apply:
+> cd terraform && terraform init -input=false >/dev/null && terraform apply -auto-approve -no-color -target=module.cluster
 > cd terraform && terraform apply -auto-approve -no-color
 tf-destroy:
 > cd terraform && terraform destroy -auto-approve -no-color
