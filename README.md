@@ -78,7 +78,7 @@ Terraform (`terraform/`, modules `cluster` and `platform`):
 - The `cluster` module creates a k3d cluster `shop-tf` and its registry (port 5001, so it never clashes with Task 3). With no cloud, it wraps the k3d command in `terraform_data`. Changing the cluster name or the number of agents makes Terraform replace the cluster.
 - The `platform` module uses the Kubernetes provider to create the `shop` namespace, a resource quota, default limits and a default-deny network policy.
 - State is local and git-ignored. The provider version is pinned and the lock file is committed.
-- `make tf-validate` (format check and validate), `tf-plan`, `tf-apply` and `tf-destroy`. Apply, destroy and apply again works from a clean start.
+- `make tf-validate` (format check and validate), `tf-plan`, `tf-apply` and `tf-destroy`. `tf-apply` runs in two stages: the cluster module first, then everything, because the Kubernetes provider needs the cluster's context before it can plan. Proof from a clean start, including a second plan with no changes: `evidence/terraform/clean-start-apply.txt`.
 
 Ansible (`ansible/`, roles `hardening` and `backup`):
 - The target is a privileged Ubuntu 24.04 container running systemd, because this VM has no way to run a second machine. Ansible reaches it through `docker exec`, not SSH.
