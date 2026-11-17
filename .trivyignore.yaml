@@ -1,0 +1,5 @@
+misconfigurations:
+  - id: DS-0002
+    paths:
+      - ansible/target.Dockerfile
+    statement: Test target must run systemd as root so the hardening role can be applied and verified. It is a throwaway container and is not deployed.
