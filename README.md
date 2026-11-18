@@ -2,6 +2,52 @@
 
 A small shop (web page, REST API, order worker) wrapped in a secure delivery pipeline, observability, automatic attack response, Kubernetes, Terraform and Ansible. Everything runs locally, with no cloud.
 
+## Prerequisites
+
+Everything below runs on Linux or macOS. Windows users should use WSL2.
+
+### Core stack (Docker Compose, tests, pipeline checks)
+
+| Tool | Why it's needed |
+|---|---|
+| Docker Engine with Compose v2 | Runs every service. Also runs gitleaks, Semgrep, Trivy, Helm and the tests as containers, so none of those need installing. |
+| make | All commands go through the Makefile. |
+| git | Cloning the repo. Gitleaks scans the git history. |
+| openssl | `make env` uses it to generate random secrets. |
+| curl | Used by the smoke-test and load scripts. |
+
+Optional: `pre-commit` (blocks secrets before commit).
+
+### Kubernetes (k3d + Helm)
+
+Only needed for `make k3d-up`, `make deploy` and `make k3d-smoke`.
+
+| Tool | Why it's needed |
+|---|---|
+| k3d | Creates the local cluster `shop` and its registry. |
+| kubectl | Creates the namespace and secret, waits for Traefik. |
+
+Helm is not needed on the host. `make helm-lint` runs it in a container.
+
+### Infrastructure as code
+
+Only needed for the `terraform-*` and `ansible-*` targets.
+
+| Tool | Version |
+|---|---|
+| Terraform | 1.6 or newer |
+| Ansible | `ansible-playbook` on PATH |
+
+### Ports used on the host
+
+- `8088`: the edge (set by `EDGE_PORT` in `.env`)
+- `5000`: the local k3d registry
+- `8081`: Jenkins (`make jenkins-up`)
+
+### Quick check
+
+    docker compose version && make --version && git --version && openssl version
+
 ## Quick start
 
 Needs: Docker Engine with Compose v2, make, git, openssl. Optional: pre-commit.
